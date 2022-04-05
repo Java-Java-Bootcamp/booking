@@ -18,13 +18,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getAllByOrganizationName(String nameOfOrganization) {
-        return bookingRepository.getAllByOrganizationName(nameOfOrganization);
+    public List<Booking> findAllByBookedFalseAndOrganizationName(String nameOfOrganization) {
+        return bookingRepository.getAllByBookedFalseAndOrganizationName(nameOfOrganization);
     }
 
-//    @Override
-//    public List<Booking> getAllBookings(String nameOfOrganization) {
-//        List<Booking> list = bookingRepository.findAll();
-//
-//    }
 }

@@ -21,6 +21,6 @@ public class BookingController {
 
     @GetMapping("/booking")
     public List<Booking> getAllBookings(@RequestParam String nameOfOrganization) {
-        return bookingService.getAllByOrganizationName(nameOfOrganization);
+        return bookingService.findAllByBookedFalseAndOrganizationName(nameOfOrganization);
     }
 }

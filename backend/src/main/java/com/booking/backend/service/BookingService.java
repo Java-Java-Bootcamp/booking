@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface BookingService {
 
-    List<Booking> getAllByOrganizationName(String nameOfOrganization);
+    List<Booking> findAllByBookedFalseAndOrganizationName(String nameOfOrganization);
 }
