@@ -27,6 +27,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://github.com/rubenlagus/TelegramBots/tree/master/telegrambots-spring-boot-starter -->
+		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots-spring-boot-starter</artifactId>
+			<version>5.7.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
