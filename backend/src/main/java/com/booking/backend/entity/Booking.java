@@ -1,8 +1,15 @@
 package com.booking.backend.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Booking {
 
@@ -14,10 +21,12 @@ public class Booking {
 
     private LocalDate dateOfEnding;
 
-    @OneToOne
+    private Integer numbersOfGuests;
+
+    @ManyToOne
     private User user;
 
-    @OneToOne
+    @ManyToOne
     private Organization organization;
 
 
