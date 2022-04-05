@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -17,11 +18,13 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate dateOfBeginning;
+    private LocalDateTime dateOfBeginning;
 
-    private LocalDate dateOfEnding;
+    private LocalDateTime dateOfEnding;
 
     private Integer numbersOfGuests;
+
+    private boolean booked;
 
     @ManyToOne
     private User user;
