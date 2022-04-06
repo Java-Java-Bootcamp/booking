@@ -4,9 +4,9 @@ import com.booking.backend.entity.Booking;
 import com.booking.backend.repository.BookingRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +27,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<Booking> getAllBookings(Integer pageNo, Integer pageSize) {
-        Pageable paging = (Pageable) PageRequest.of(pageNo, pageSize);
-        Page<Booking> pagedResult = bookingRepository.findAll((org.springframework.data.domain.Pageable) paging);
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        Page<Booking> pagedResult = bookingRepository.findAll(paging);
         if (pagedResult.hasContent()) {
             return pagedResult.getContent();
         } else {

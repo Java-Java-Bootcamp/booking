@@ -22,7 +22,7 @@ public class BookingController {
         return bookingService.findAllByBookedFalseAndOrganizationName(nameOfOrganization);
     }
 
-    @GetMapping("/booking/")
+    @GetMapping("/bookings")
     public List<Booking> getAll(@RequestParam Integer limit,
                                 @RequestParam Integer offset) {
         return bookingService.getAllBookings(limit, offset);
