@@ -1,5 +1,6 @@
 package com.booking.backend.controller;
 
+import com.booking.backend.dto.BookingDto;
 import com.booking.backend.entity.Booking;
 import com.booking.backend.service.BookingService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,19 @@ public class BookingController {
     }
 
     @GetMapping("/bookings")
-    public List<Booking> getAll(@RequestParam Integer limit,
-                                @RequestParam Integer offset) {
-        return bookingService.getAllBookings(limit, offset);
+    public List<BookingDto> getAll(@RequestParam Integer limit,
+                                   @RequestParam Integer offset,
+                                   @RequestParam String sortBy) {
+        return bookingService.getAllBookings(limit, offset, sortBy);
     }
+
+//    @GetMapping("/bookinga")
+//    public List<Booking> getAllBookings1(String name) {
+//        return bookingService.getTopByOrganizationRating(name);
+//    }
+
+//    @GetMapping("/bookingss")
+//    public List<Booking> getAllBookings1(@RequestParam String nameOfOrganization) {
+//        return bookingService.getAllByOrganizationNameAndOrganizationRating(nameOfOrganization);
+//    }
 }
