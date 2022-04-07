@@ -34,7 +34,12 @@ public class BookingServiceImpl implements BookingService {
             Page<Booking> pagedResult = bookingRepository.findAll(paging);
             if (pagedResult.hasContent()) {
                 return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(e.getId(), e.getOrganization().getRating(), e.getOrganization().getName())).toList();
+                        .map(e -> new BookingDto(e.getId(),
+                                e.getOrganization().getName(),
+                                e.getOrganization().getRating(),
+                                e.getOrganization().getAverageCheck(),
+                                e.getOrganization().getCuisine(),
+                                e.getOrganization().getSchedule())).toList();
             } else {
                 return new ArrayList<BookingDto>();
             }
@@ -44,7 +49,12 @@ public class BookingServiceImpl implements BookingService {
             Page<Booking> pagedResult = bookingRepository.findAll(paging);
             if (pagedResult.hasContent()) {
                 return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(e.getId(), e.getOrganization().getAverageCheck(), e.getOrganization().getName())).toList();
+                        .map(e -> new BookingDto(e.getId(),
+                                e.getOrganization().getName(),
+                                e.getOrganization().getRating(),
+                                e.getOrganization().getAverageCheck(),
+                                e.getOrganization().getCuisine(),
+                                e.getOrganization().getSchedule())).toList();
             } else {
                 return new ArrayList<BookingDto>();
             }
@@ -54,7 +64,12 @@ public class BookingServiceImpl implements BookingService {
             Page<Booking> pagedResult = bookingRepository.findAll(paging);
             if (pagedResult.hasContent()) {
                 return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(e.getId(), e.getOrganization().getAverageCheck(), e.getOrganization().getName())).toList();
+                        .map(e -> new BookingDto(e.getId(),
+                                e.getOrganization().getName(),
+                                e.getOrganization().getRating(),
+                                e.getOrganization().getAverageCheck(),
+                                e.getOrganization().getCuisine(),
+                                e.getOrganization().getSchedule())).toList();
             } else {
                 return new ArrayList<BookingDto>();
             }
