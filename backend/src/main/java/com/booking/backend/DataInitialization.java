@@ -34,6 +34,7 @@ public class DataInitialization implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
+        // создаём варианты "кухонь" для заведений
         Cuisine cuisine = new Cuisine();
         cuisine.setName("French");
         cuisine = cuisineRepository.save(cuisine);
@@ -41,17 +42,19 @@ public class DataInitialization implements CommandLineRunner {
         cuisine1.setName("Italian");
         cuisine1 = cuisineRepository.save(cuisine1);
 
+        //создаём юзеров
         User user = new User(1L, "Alex");
         userRepository.save(user);
         User user1 = new User(2L, "Dima");
         userRepository.save(user1);
 
+        // создаём организации
         Organization organization = new Organization(1L, "Restaurant", "10:00-22:00", 10, 3000.5, 8.7, new ArrayList<>(), new ArrayList<>());
         organizationRepository.save(organization);
-
         Organization organization1 = new Organization(2L, "Bar", "10:00-22:00", 20, 2000.5, 8.0, new ArrayList<>(), new ArrayList<>());
         organizationRepository.save(organization1);
 
+        // создаём букинги
         Booking booking = new Booking(1L, 10, 11, 5, false, user, organization);
         Booking booking1 = new Booking(2L, 11, 12, 5, false, user1, organization1);
         Booking booking2 = new Booking(3L, 12, 13, 5, true, null, organization);
@@ -70,6 +73,7 @@ public class DataInitialization implements CommandLineRunner {
         bookingRepository.save(booking7);
 
 
+        // создаём слоты для бронирований и кнопок в тг
         Reservation reservation = new Reservation(1L, booking.getBeginning(), booking.getEnding(), 10);
         Reservation reservation1 = new Reservation(2L, booking1.getBeginning(), booking1.getEnding(), 10);
         Reservation reservation2 = new Reservation(3L, booking2.getBeginning(), booking2.getEnding(), 10);
@@ -87,15 +91,27 @@ public class DataInitialization implements CommandLineRunner {
         reservRepo.save(reservation5);
         reservRepo.save(reservation6);
         reservRepo.save(reservation7);
+
+
+        // добавляем организациям слоты на каждый час работы с данными по доступным столикам
         organization1.getReservations().add(reservation);
         organization1.getReservations().add(reservation1);
         organization1.getReservations().add(reservation2);
         organization1.getReservations().add(reservation3);
+        organization1.getReservations().add(reservation4);
+        organization1.getReservations().add(reservation5);
+        organization1.getReservations().add(reservation6);
+        organization1.getReservations().add(reservation7);
+        organization.getReservations().add(reservation);
+        organization.getReservations().add(reservation1);
+        organization.getReservations().add(reservation2);
+        organization.getReservations().add(reservation3);
         organization.getReservations().add(reservation4);
         organization.getReservations().add(reservation5);
         organization.getReservations().add(reservation6);
         organization.getReservations().add(reservation7);
 
+        // добавляем варианты кухни организации
         organization.getCuisine().add(cuisine);
         organization.getCuisine().add(cuisine1);
         organization.getCuisine().add(cuisine);
