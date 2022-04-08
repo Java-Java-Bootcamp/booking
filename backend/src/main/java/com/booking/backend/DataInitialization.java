@@ -52,7 +52,6 @@ public class DataInitialization implements CommandLineRunner {
         Organization organization1 = new Organization(2L, "Bar", "10:00-22:00", 20, 2000.5, 8.0, new ArrayList<>(), new ArrayList<>());
         organizationRepository.save(organization1);
 
-
         Booking booking = new Booking(1L, 10, 11, 5, false, user, organization);
         Booking booking1 = new Booking(2L, 11, 12, 5, false, user1, organization1);
         Booking booking2 = new Booking(3L, 12, 13, 5, true, null, organization);
