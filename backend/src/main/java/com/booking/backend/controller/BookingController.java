@@ -24,10 +24,10 @@ public class BookingController {
     }
 
     @GetMapping("/bookings")
-    public List<Booking> getAll(@RequestParam Integer limit,
+    public List<BookingDto> getAll(@RequestParam Integer limit,
                                    @RequestParam Integer offset,
                                    @RequestParam String sortBy) {
-        return bookingService.getAllBookings(limit, offset, sortBy);
+        return bookingService.getAllBookings(offset, limit, sortBy);
     }
 
 //    @GetMapping("/bookinga")

@@ -13,14 +13,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 public class Booking {
+    //нужны ли нам в букинге время записи, если время записи есть в reservation?
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime dateOfBeginning;
+    private Integer beginning;
 
-    private LocalDateTime dateOfEnding;
+    private Integer ending;
 
     private Integer numbersOfGuests;
 
