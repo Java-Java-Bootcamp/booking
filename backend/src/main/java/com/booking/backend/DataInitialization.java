@@ -34,36 +34,104 @@ public class DataInitialization implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
-        // создаём варианты "кухонь" для заведений
-        Cuisine cuisine = new Cuisine();
-        cuisine.setName("French");
+        Cuisine cuisine = Cuisine.builder()
+                .name("French")
+                .build();
         cuisine = cuisineRepository.save(cuisine);
-        Cuisine cuisine1 = new Cuisine();
-        cuisine1.setName("Italian");
+
+        Cuisine cuisine1 = Cuisine.builder()
+                .name("Italian")
+                .build();
         cuisine1 = cuisineRepository.save(cuisine1);
 
-        //создаём юзеров
-        User user = new User(1L, "Alex");
+        User user = User.builder()
+                .name("Alex")
+                .build();
         userRepository.save(user);
-        User user1 = new User(2L, "Dima");
+        User user1 = User.builder()
+                .name("Dima")
+                .build();
         userRepository.save(user1);
 
-        // создаём организации
-        Organization organization = new Organization(1L, "Restaurant", "10:00-22:00", 10, 3000.5, 8.7, new ArrayList<>(), new ArrayList<>());
+        Organization organization = Organization.builder()
+                .name("Restaurant")
+                .schedule("10:00-22:00")
+                .averageCheck(3000.5)
+                .rating(8.7)
+                .numbersOfTables(100)
+                .reservations(new ArrayList<>())
+                .cuisine(new ArrayList<>())
+                .build();
         organizationRepository.save(organization);
-        Organization organization1 = new Organization(2L, "Bar", "10:00-22:00", 20, 2000.5, 8.0, new ArrayList<>(), new ArrayList<>());
+
+        Organization organization1 = Organization.builder()
+                .name("Bar")
+                .schedule("10:00-22:00")
+                .averageCheck(2000.5)
+                .rating(8.0)
+                .numbersOfTables(100)
+                .reservations(new ArrayList<>())
+                .cuisine(new ArrayList<>())
+                .build();
         organizationRepository.save(organization1);
 
-        // создаём букинги
-        Booking booking = new Booking(1L, 10, 11, 5, false, user, organization);
-        Booking booking1 = new Booking(2L, 11, 12, 5, false, user1, organization1);
-        Booking booking2 = new Booking(3L, 12, 13, 5, true, null, organization);
-        Booking booking3 = new Booking(4L, 14, 15, 5, true, null, organization1);
-        Booking booking4 = new Booking(5L, 15, 16, 5, true, null, organization);
-        Booking booking5 = new Booking(6L, 16, 17, 5, true, null, organization);
-        Booking booking6 = new Booking(7L, 17, 18, 5, true, null, organization1);
-        Booking booking7 = new Booking(8L, 18, 19, 5, true, null, organization1);
-        bookingRepository.save(booking);
+        Booking booking1 = Booking.builder()
+                .beginning(10)
+                .ending(11)
+                .booked(true)
+                .user(user)
+                .organization(organization)
+                .build();
+        Booking booking2 = Booking.builder()
+                .beginning(11)
+                .ending(12)
+                .booked(true)
+                .user(user1)
+                .organization(organization1)
+                .build();
+        Booking booking3 = Booking.builder()
+                .beginning(12)
+                .ending(13)
+                .booked(true)
+                .user(null)
+                .organization(null)
+                .build();
+        Booking booking4 = Booking.builder()
+                .beginning(13)
+                .ending(14)
+                .booked(true)
+                .user(null)
+                .organization(null)
+                .build();
+        Booking booking5 = Booking.builder()
+                .beginning(15)
+                .ending(16)
+                .booked(true)
+                .user(null)
+                .organization(null)
+                .build();
+        Booking booking6 = Booking.builder()
+                .beginning(16)
+                .ending(17)
+                .booked(true)
+                .user(null)
+                .organization(null)
+                .build();
+        Booking booking7 = Booking.builder()
+                .beginning(17)
+                .ending(18)
+                .booked(true)
+                .user(null)
+                .organization(null)
+                .build();
+        Booking booking8 = Booking.builder()
+                .beginning(18)
+                .ending(19)
+                .booked(true)
+                .user(null)
+                .organization(null)
+                .build();
+
         bookingRepository.save(booking1);
         bookingRepository.save(booking2);
         bookingRepository.save(booking3);
@@ -71,19 +139,50 @@ public class DataInitialization implements CommandLineRunner {
         bookingRepository.save(booking5);
         bookingRepository.save(booking6);
         bookingRepository.save(booking7);
+        bookingRepository.save(booking8);
 
 
-        // создаём слоты для бронирований и кнопок в тг
-        Reservation reservation = new Reservation(1L, booking.getBeginning(), booking.getEnding(), 10);
-        Reservation reservation1 = new Reservation(2L, booking1.getBeginning(), booking1.getEnding(), 10);
-        Reservation reservation2 = new Reservation(3L, booking2.getBeginning(), booking2.getEnding(), 10);
-        Reservation reservation3 = new Reservation(4L, booking3.getBeginning(), booking3.getEnding(), 10);
-        Reservation reservation4 = new Reservation(5L, booking4.getBeginning(), booking4.getEnding(), 10);
-        Reservation reservation5 = new Reservation(6L, booking5.getBeginning(), booking5.getEnding(), 10);
-        Reservation reservation6 = new Reservation(7L, booking6.getBeginning(), booking6.getEnding(), 10);
-        Reservation reservation7 = new Reservation(8L, booking7.getBeginning(), booking7.getEnding(), 10);
+        Reservation reservation1 = Reservation.builder()
+                .beginning(booking1.getBeginning())
+                .ending(booking1.getEnding())
+                .numbersOfTables(10)
+                .build();
+        Reservation reservation2 = Reservation.builder()
+                .beginning(booking2.getBeginning())
+                .ending(booking2.getEnding())
+                .numbersOfTables(10)
+                .build();
+        Reservation reservation3 = Reservation.builder()
+                .beginning(booking3.getBeginning())
+                .ending(booking3.getEnding())
+                .numbersOfTables(10)
+                .build();
+        Reservation reservation4 = Reservation.builder()
+                .beginning(booking4.getBeginning())
+                .ending(booking4.getEnding())
+                .numbersOfTables(10)
+                .build();
+        Reservation reservation5 = Reservation.builder()
+                .beginning(booking5.getBeginning())
+                .ending(booking5.getEnding())
+                .numbersOfTables(10)
+                .build();
+        Reservation reservation6 = Reservation.builder()
+                .beginning(booking6.getBeginning())
+                .ending(booking6.getEnding())
+                .numbersOfTables(10)
+                .build();
+        Reservation reservation7 = Reservation.builder()
+                .beginning(booking7.getBeginning())
+                .ending(booking7.getEnding())
+                .numbersOfTables(10)
+                .build();
+        Reservation reservation8 = Reservation.builder()
+                .beginning(booking8.getBeginning())
+                .ending(booking8.getEnding())
+                .numbersOfTables(10)
+                .build();
 
-        reservRepo.save(reservation);
         reservRepo.save(reservation1);
         reservRepo.save(reservation2);
         reservRepo.save(reservation3);
@@ -91,10 +190,7 @@ public class DataInitialization implements CommandLineRunner {
         reservRepo.save(reservation5);
         reservRepo.save(reservation6);
         reservRepo.save(reservation7);
-
-
-        // добавляем организациям слоты на каждый час работы с данными по доступным столикам
-        organization1.getReservations().add(reservation);
+        reservRepo.save(reservation8);
         organization1.getReservations().add(reservation1);
         organization1.getReservations().add(reservation2);
         organization1.getReservations().add(reservation3);
@@ -102,7 +198,12 @@ public class DataInitialization implements CommandLineRunner {
         organization1.getReservations().add(reservation5);
         organization1.getReservations().add(reservation6);
         organization1.getReservations().add(reservation7);
-        organization.getReservations().add(reservation);
+        organization1.getReservations().add(reservation8);
+        organization1.getCuisine().add(cuisine);
+        organization1.getCuisine().add(cuisine1);
+        organizationRepository.save(organization1);
+
+
         organization.getReservations().add(reservation1);
         organization.getReservations().add(reservation2);
         organization.getReservations().add(reservation3);
@@ -110,14 +211,10 @@ public class DataInitialization implements CommandLineRunner {
         organization.getReservations().add(reservation5);
         organization.getReservations().add(reservation6);
         organization.getReservations().add(reservation7);
-
-        // добавляем варианты кухни организации
-        organization.getCuisine().add(cuisine);
-        organization.getCuisine().add(cuisine1);
+        organization.getReservations().add(reservation8);
         organization.getCuisine().add(cuisine);
         organization.getCuisine().add(cuisine1);
         organizationRepository.save(organization);
-        organizationRepository.save(organization1);
 
 
     }

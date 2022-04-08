@@ -2,6 +2,7 @@ package com.booking.backend.entity;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class Organization {
 
     @Id
@@ -29,7 +31,7 @@ public class Organization {
 
     private Double rating;
 
-    @OneToMany
+    @ManyToMany
     private List<Reservation> reservations = new ArrayList<>();
 
     @ManyToMany

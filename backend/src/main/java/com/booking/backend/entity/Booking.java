@@ -1,6 +1,7 @@
 package com.booking.backend.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class Booking {
     //нужны ли нам в букинге время записи, если время записи есть в reservation?
 
