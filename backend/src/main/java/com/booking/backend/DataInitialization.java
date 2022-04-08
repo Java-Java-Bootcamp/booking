@@ -78,14 +78,14 @@ public class DataInitialization implements CommandLineRunner {
         Booking booking1 = Booking.builder()
                 .beginning(10)
                 .ending(11)
-                .booked(true)
+                .booked(false)
                 .user(user)
                 .organization(organization)
                 .build();
         Booking booking2 = Booking.builder()
                 .beginning(11)
                 .ending(12)
-                .booked(true)
+                .booked(false)
                 .user(user1)
                 .organization(organization1)
                 .build();
@@ -94,42 +94,42 @@ public class DataInitialization implements CommandLineRunner {
                 .ending(13)
                 .booked(true)
                 .user(null)
-                .organization(null)
+                .organization(organization1)
                 .build();
         Booking booking4 = Booking.builder()
                 .beginning(13)
                 .ending(14)
                 .booked(true)
                 .user(null)
-                .organization(null)
+                .organization(organization1)
                 .build();
         Booking booking5 = Booking.builder()
                 .beginning(15)
                 .ending(16)
                 .booked(true)
                 .user(null)
-                .organization(null)
+                .organization(organization1)
                 .build();
         Booking booking6 = Booking.builder()
                 .beginning(16)
                 .ending(17)
                 .booked(true)
                 .user(null)
-                .organization(null)
+                .organization(organization1)
                 .build();
         Booking booking7 = Booking.builder()
                 .beginning(17)
                 .ending(18)
                 .booked(true)
                 .user(null)
-                .organization(null)
+                .organization(organization1)
                 .build();
         Booking booking8 = Booking.builder()
                 .beginning(18)
                 .ending(19)
                 .booked(true)
                 .user(null)
-                .organization(null)
+                .organization(organization)
                 .build();
 
         bookingRepository.save(booking1);
@@ -140,7 +140,6 @@ public class DataInitialization implements CommandLineRunner {
         bookingRepository.save(booking6);
         bookingRepository.save(booking7);
         bookingRepository.save(booking8);
-
 
         Reservation reservation1 = Reservation.builder()
                 .beginning(booking1.getBeginning())

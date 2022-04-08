@@ -32,10 +32,10 @@ public class Organization {
     private Double rating;
 
     @ManyToMany
-    private List<Reservation> reservations = new ArrayList<>();
+    private List<Reservation> reservations;
 
     @ManyToMany
-    private List<Cuisine> cuisine = new ArrayList<>();
+    private List<Cuisine> cuisine;
 
 
 }
