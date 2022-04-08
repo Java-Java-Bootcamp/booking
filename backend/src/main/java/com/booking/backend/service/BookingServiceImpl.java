@@ -28,52 +28,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllBookings(Integer pageNo, Integer pageSize, String sortBy) {
-        if (sortBy.equals("rate")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.rating"));
-            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(e.getId(),
-                                e.getOrganization().getName(),
-                                e.getOrganization().getRating(),
-                                e.getOrganization().getAverageCheck(),
-                                e.getOrganization().getCuisine(),
-                                e.getOrganization().getSchedule())).toList();
-            } else {
-                return new ArrayList<BookingDto>();
-            }
+    public List<Booking> getAllBookings(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        Page<Booking> pagedResult = bookingRepository.findAll(paging);
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+            return new ArrayList<Booking>();
         }
-        if (sortBy.equals("bill")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.averageCheck"));
-            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(e.getId(),
-                                e.getOrganization().getName(),
-                                e.getOrganization().getRating(),
-                                e.getOrganization().getAverageCheck(),
-                                e.getOrganization().getCuisine(),
-                                e.getOrganization().getSchedule())).toList();
-            } else {
-                return new ArrayList<BookingDto>();
-            }
-        }
-        if (sortBy.equals("time")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("dateOfBeginning"));
-            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(e.getId(),
-                                e.getOrganization().getName(),
-                                e.getOrganization().getRating(),
-                                e.getOrganization().getAverageCheck(),
-                                e.getOrganization().getCuisine(),
-                                e.getOrganization().getSchedule())).toList();
-            } else {
-                return new ArrayList<BookingDto>();
-            }
-        }
-        return null;
     }
 }
