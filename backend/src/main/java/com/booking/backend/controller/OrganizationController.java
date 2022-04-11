@@ -1,11 +1,10 @@
 package com.booking.backend.controller;
 
 
-import com.booking.backend.entity.Booking;
-import com.booking.backend.entity.Organization;
+import com.booking.backend.dto.OrganizationDto;
 import com.booking.backend.service.OrganizationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,10 +19,16 @@ public class OrganizationController {
         this.organizationService = organizationService;
     }
 
-    @GetMapping("/bookingsss")
-    public List<Organization> getAll(@RequestParam Integer limit,
-                                     @RequestParam Integer offset,
-                                     @RequestParam String sortBy) {
-        return organizationService.getSortedOrganization(limit, offset, sortBy);
+    @GetMapping("/organization")
+    @RequestMapping(value = "/organization", params = {"pageNo","pageSize","sortBy"})
+    public List<OrganizationDto> getAll(@RequestParam Integer pageNo,
+                                        @RequestParam Integer pageSize,
+                                        @RequestParam String sortBy) {
+        return organizationService.getSortedOrganization(pageNo, pageSize, sortBy);
+    }
+    @GetMapping("/organization")
+    @RequestMapping(value = "/organization", params = "name")
+    public List<OrganizationDto> getAll(@RequestParam String name) {
+        return organizationService.findAllByName(name);
     }
 }
