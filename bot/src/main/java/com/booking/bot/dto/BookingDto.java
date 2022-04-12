@@ -8,5 +8,7 @@ import java.util.List;
 public record BookingDto(Long id,
                          String organizationName,
                          Double rate,
-                         Double bill) {
+                         Double bill,
+                         Long userId,
+                         Long organizationId) {
 }

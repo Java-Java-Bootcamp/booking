@@ -3,6 +3,7 @@ package com.booking.bot;
 import com.booking.bot.dto.BookingDto;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.ReservationDto;
+import com.booking.bot.dto.UserDto;
 import com.booking.bot.entity.Reservation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,9 +47,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final WebClient client = WebClient.create("http://localhost:8080");
     private List<Reservation> reservationDtos = new ArrayList<>();
     private OrganizationDto organizationDto;
-
-
-//    private OrganizationDto organizationDto = new OrganizationDto();
+    private UserDto userDto;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -67,21 +66,22 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
 
-    private void handleCallbackForReservations(CallbackQuery callbackQuery) {
-
-        ReservationDto reservationDto = new ReservationDto(10, null, null);
-//        BookingDto bookingDto = new BookingDto(1L,
-//                organizationDto.get().name(),
-//                organizationDto.get().rating(),
-//                organizationDto.get().averageCheck());
-    }
+//    private void handleCallbackForReservations(CallbackQuery callbackQuery) {
+//
+//        ReservationDto reservationDto = new ReservationDto(10, null, null);
+////        BookingDto bookingDto = new BookingDto(1L,
+////                organizationDto.get().name(),
+////                organizationDto.get().rating(),
+////                organizationDto.get().averageCheck());
+//    }
 
 
     private void handleCallback(CallbackQuery callbackQuery) {
         String[] param = callbackQuery.getData().split(":");
         if(param[0].contains("Res")) {
-            System.out.println("Ok");
-            System.out.println(param[1]);
+            // создали юзера, есть организация, есть id резерва. Теперь надо создать Букинг и отправить его
+            Mono<OrganizationDto[]> organizationDtoMono
+                    = client.get().uri("/booking", param[1]).retrieve().bodyToMono(OrganizationDto[].class);
         }
         if (param[0].contains("Org")) {
             Mono<OrganizationDto[]> organizationDtoMono
@@ -192,6 +192,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         List<Reservation> reservationDtos = organizationDto.reservationsList();
         List<List<InlineKeyboardButton>> buttons1 = new ArrayList<>();
+        userDto = new UserDto(message.getFrom().getId(), message.getFrom().getUserName());
         for (Reservation reservation : reservationDtos) {
             System.out.println(reservation);
             buttons1.add(

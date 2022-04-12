@@ -92,12 +92,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void addNewBooking(BookingDto bookingDto) {
-//        bookingRepository.save(
-//                new Booking(bookingDto.id(),
-//                bookingDto.bill(),
-//                        bookingDto.cuisineOfOrganization(),
-//                        bookingDto.slotsOfReservation(),
-//                        bookingDto.organizationName(),
-//                        ))
+        Booking booking = Booking.builder()
+//                .user(bookingDto.userDto())
+//                .organization(bookingDto.organizationDto())
+//                .beginning(bookingDto.organizationDto().getReservations().stream().findFirst().get().getBeginning())
+//                .ending(bookingDto.organizationDto().getReservations().stream().findFirst().get().getEnding())
+                .build();
+        bookingRepository.save(booking);
     }
 }
