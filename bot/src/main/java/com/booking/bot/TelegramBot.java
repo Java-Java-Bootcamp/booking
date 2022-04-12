@@ -2,19 +2,22 @@ package com.booking.bot;
 
 import com.booking.bot.dto.BookingDto;
 import com.booking.bot.dto.OrganizationDto;
+import com.booking.bot.dto.ReservationDto;
+import com.booking.bot.entity.Reservation;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -40,6 +43,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final WebClient client = WebClient.create("http://localhost:8080");
+    private List<Reservation> reservationDtos = new ArrayList<>();
+    private OrganizationDto organizationDto;
+
+
+//    private OrganizationDto organizationDto = new OrganizationDto();
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -51,6 +60,33 @@ public class TelegramBot extends TelegramLongPollingBot {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
+        }
+        if (update.hasCallbackQuery()) {
+            handleCallback(update.getCallbackQuery());
+        }
+    }
+
+
+    private void handleCallbackForReservations(CallbackQuery callbackQuery) {
+
+        ReservationDto reservationDto = new ReservationDto(10, null, null);
+//        BookingDto bookingDto = new BookingDto(1L,
+//                organizationDto.get().name(),
+//                organizationDto.get().rating(),
+//                organizationDto.get().averageCheck());
+    }
+
+
+    private void handleCallback(CallbackQuery callbackQuery) {
+        String[] param = callbackQuery.getData().split(":");
+        if(param[0].contains("Res")) {
+            System.out.println("Ok");
+            System.out.println(param[1]);
+        }
+        if (param[0].contains("Org")) {
+            Mono<OrganizationDto[]> organizationDtoMono
+                    = client.get().uri("/organization?name={name}", param[1]).retrieve().bodyToMono(OrganizationDto[].class);
+            organizationDto = Arrays.stream(organizationDtoMono.share().block()).findFirst().get();
         }
     }
 
@@ -83,6 +119,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                                         .build()
                         );
                         break;
+                    case "/create_booking":
+                        statusChat.put(message.getFrom().getId(), "/create_booking");
+                        createButtonsForOrganization(message);
+                        return;
+                    case "/create_reserve":
+                        statusChat.put(message.getFrom().getId(), "/create_reserve");
+                        createButtonsForReservations(message);
+                        return;
                     default:
                         execute(
                                 SendMessage.builder()
@@ -97,7 +141,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         }
 
-        WebClient client = WebClient.create("http://localhost:8080");
         String messageText = message.getText();
         Optional<String> messageString = parseString(messageText);
         if (statusChat.get(message.getFrom().getId()) != null && statusChat.get(message.getFrom().getId()).equals("/find")) {
@@ -145,12 +188,65 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     }
 
-    private Optional<Double> parseDouble(String messageText) {
-        try {
-            return Optional.of(Double.parseDouble(messageText));
-        } catch (Exception e) {
-            return Optional.empty();
+    private void createButtonsForReservations(Message message) throws TelegramApiException {
+
+        List<Reservation> reservationDtos = organizationDto.reservationsList();
+        List<List<InlineKeyboardButton>> buttons1 = new ArrayList<>();
+        for (Reservation reservation : reservationDtos) {
+            System.out.println(reservation);
+            buttons1.add(
+                    Arrays.asList(
+                            InlineKeyboardButton.builder()
+                                    .text(reservation.beginning() + "-" + reservation.ending())
+                                    .callbackData("Reservation:" + reservation.id())
+                                    .build()));
         }
+        execute(
+                SendMessage.builder()
+                        .text("Please choose product category")
+                        .chatId(message.getChatId().toString())
+                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons1).build())
+                        .build());
+    }
+
+
+    private void createButtonsForOrganization(Message message) throws TelegramApiException {
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        Mono<OrganizationDto[]> organizationDtoMono = client.get().uri("/organization")
+                .retrieve().bodyToMono(OrganizationDto[].class);
+        OrganizationDto[] organizationDto = organizationDtoMono.share().block();
+        if (organizationDto.length == 0) {
+            execute(
+                    SendMessage.builder()
+                            .text("Organizations not found")
+                            .chatId(message.getChatId().toString())
+                            .build()
+            );
+            return;
+        }
+        List<OrganizationDto> listOfOrganizations = Arrays.stream(organizationDto).collect(Collectors.toList());
+        for (OrganizationDto organizationDtoTemp : listOfOrganizations) {
+            buttons.add(
+                    Arrays.asList(
+                            InlineKeyboardButton.builder()
+                                    .text(organizationDtoTemp.name())
+                                    .callbackData("Organization:" + organizationDtoTemp.name())
+                                    .build()));
+        }
+
+        execute(
+                SendMessage.builder()
+                        .text("Please choose product category")
+                        .chatId(message.getChatId().toString())
+                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
+                        .build());
+        execute(
+                SendMessage.builder()
+                        .text("Выберите время: /create_reserve")
+                        .chatId(message.getChatId().toString())
+                        .build()
+        );
+        return;
     }
 
     private Optional<String> parseString(String messageText) {

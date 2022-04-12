@@ -31,6 +31,7 @@ public class Booking {
 
     @ManyToOne
     private User user;
+    // создать команду создающую юзера
 
     @ManyToOne
     private Organization organization;

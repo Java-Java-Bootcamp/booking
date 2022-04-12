@@ -29,6 +29,13 @@ public class OrganizationController {
     @GetMapping("/organization")
     @RequestMapping(value = "/organization", params = "name")
     public List<OrganizationDto> getAll(@RequestParam String name) {
+        System.out.println(organizationService.findAllByName(name));
         return organizationService.findAllByName(name);
+    }
+
+    @GetMapping("/organization")
+    @RequestMapping(value = "/organization")
+    public List<OrganizationDto> getAllOrganization() {
+        return organizationService.getAll();
     }
 }

@@ -3,10 +3,7 @@ package com.booking.backend.controller;
 import com.booking.backend.dto.BookingDto;
 import com.booking.backend.entity.Booking;
 import com.booking.backend.service.BookingService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,13 +30,9 @@ public class BookingController {
         return bookingService.getAllBookings(pageNo, pageSize, sortBy);
     }
 
-//    @GetMapping("/bookinga")
-//    public List<Booking> getAllBookings1(String name) {
-//        return bookingService.getTopByOrganizationRating(name);
-//    }
-
-//    @GetMapping("/bookingss")
-//    public List<Booking> getAllBookings1(@RequestParam String nameOfOrganization) {
-//        return bookingService.getAllByOrganizationNameAndOrganizationRating(nameOfOrganization);
-//    }
+    @PostMapping("/booking")
+    @RequestMapping(value = "/booking")
+    public void addNewBooking(@RequestBody BookingDto bookingDto) {
+        bookingService.addNewBooking(bookingDto);
+    }
 }

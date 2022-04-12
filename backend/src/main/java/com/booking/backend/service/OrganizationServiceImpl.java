@@ -34,7 +34,9 @@ public class OrganizationServiceImpl implements OrganizationService {
                                 e.getSchedule(),
                                 e.getNumbersOfTables(),
                                 e.getAverageCheck(),
-                                e.getRating()))
+                                e.getRating(),
+                                e.getReservations(),
+                                e.getCuisine()))
                         .collect(Collectors.toList());
             } else {
                 return new ArrayList<>();
@@ -50,7 +52,9 @@ public class OrganizationServiceImpl implements OrganizationService {
                                 e.getSchedule(),
                                 e.getNumbersOfTables(),
                                 e.getAverageCheck(),
-                                e.getRating()))
+                                e.getRating(),
+                                e.getReservations(),
+                                e.getCuisine()))
                         .collect(Collectors.toList());
             } else {
                 return new ArrayList<>();
@@ -66,7 +70,9 @@ public class OrganizationServiceImpl implements OrganizationService {
                                 e.getSchedule(),
                                 e.getNumbersOfTables(),
                                 e.getAverageCheck(),
-                                e.getRating()))
+                                e.getRating(),
+                                e.getReservations(),
+                                e.getCuisine()))
                         .collect(Collectors.toList());
             } else {
                 return new ArrayList<>();
@@ -83,7 +89,23 @@ public class OrganizationServiceImpl implements OrganizationService {
                         e.getSchedule(),
                         e.getNumbersOfTables(),
                         e.getAverageCheck(),
-                        e.getRating()))
+                        e.getRating(),
+                        e.getReservations(),
+                        e.getCuisine()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrganizationDto> getAll() {
+        return organizationRepository.findAll().stream()
+                .map(organization -> new OrganizationDto(organization.getId(),
+                        organization.getName(),
+                        organization.getSchedule(),
+                        organization.getNumbersOfTables(),
+                        organization.getAverageCheck(),
+                        organization.getRating(),
+                        organization.getReservations(),
+                        organization.getCuisine()))
                 .collect(Collectors.toList());
     }
 }

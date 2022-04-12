@@ -89,4 +89,15 @@ public class BookingServiceImpl implements BookingService {
         }
         return null;
     }
+
+    @Override
+    public void addNewBooking(BookingDto bookingDto) {
+//        bookingRepository.save(
+//                new Booking(bookingDto.id(),
+//                bookingDto.bill(),
+//                        bookingDto.cuisineOfOrganization(),
+//                        bookingDto.slotsOfReservation(),
+//                        bookingDto.organizationName(),
+//                        ))
+    }
 }
