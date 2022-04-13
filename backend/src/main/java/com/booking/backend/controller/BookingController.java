@@ -16,11 +16,11 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping("/booking")
-    @RequestMapping(value = "/booking", params = "nameOfOrganization")
-    public List<Booking> getAllBookings(@RequestParam String nameOfOrganization) {
-        return bookingService.findAllByBookedFalseAndOrganizationName(nameOfOrganization);
-    }
+//    @GetMapping("/booking")
+//    @RequestMapping(value = "/booking", params = "nameOfOrganization")
+//    public List<Booking> getAllBookings(@RequestParam String nameOfOrganization) {
+//        return bookingService.findAllByBookedFalseAndOrganizationName(nameOfOrganization);
+//    }
 
     @GetMapping("/booking")
     @RequestMapping(value = "/booking", params = {"pageNo","pageSize","sortBy"})
@@ -30,9 +30,9 @@ public class BookingController {
         return bookingService.getAllBookings(pageNo, pageSize, sortBy);
     }
 
-    @PostMapping("/booking")
-    @RequestMapping(value = "/booking")
+    @PostMapping("/bookings")
     public void addNewBooking(@RequestBody BookingDto bookingDto) {
         bookingService.addNewBooking(bookingDto);
     }
+
 }

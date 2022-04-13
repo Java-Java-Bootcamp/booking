@@ -25,10 +25,6 @@ public class Booking {
 
     private Integer ending;
 
-    private Integer numbersOfGuests;
-
-    private boolean booked;
-
     @ManyToOne
     private User user;
     // создать команду создающую юзера

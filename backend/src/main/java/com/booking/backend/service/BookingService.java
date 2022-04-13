@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BookingService {
 
-    List<Booking> findAllByBookedFalseAndOrganizationName(String nameOfOrganization);
+//    List<Booking> findAllByBookedFalseAndOrganizationName(String nameOfOrganization);
 
     List<BookingDto> getAllBookings(Integer pageNo, Integer pageSize, String sortBy);
 

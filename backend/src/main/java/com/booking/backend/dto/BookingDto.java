@@ -6,10 +6,7 @@ import com.booking.backend.entity.Reservation;
 
 import java.util.List;
 
-public record BookingDto(Long id,
-                         String organizationName,
-                         Double rate,
-                         Double bill,
-                         List<Cuisine> cuisineOfOrganization,
-                         List<Reservation> slotsOfReservation) {
+public record BookingDto(Reservation reservation,
+                         UserDto userDto,
+                         Long organizationId) {
 }

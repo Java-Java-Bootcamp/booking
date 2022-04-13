@@ -5,10 +5,10 @@ import com.booking.bot.entity.Reservation;
 
 import java.util.List;
 
-public record BookingDto(Long id,
-                         String organizationName,
-                         Double rate,
-                         Double bill,
-                         Long userId,
-                         Long organizationId) {
+public record BookingDto(Reservation reservation,
+                         UserDto userDto,
+                         Long organizationId)
+{
+
+    //в бэкенде получить эту сущность
 }
