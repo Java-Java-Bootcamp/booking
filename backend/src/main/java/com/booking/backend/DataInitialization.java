@@ -44,14 +44,6 @@ public class DataInitialization implements CommandLineRunner {
                 .build();
         cuisine1 = cuisineRepository.save(cuisine1);
 
-        User user = User.builder()
-                .name("Alex")
-                .build();
-        userRepository.save(user);
-        User user1 = User.builder()
-                .name("Dima")
-                .build();
-        userRepository.save(user1);
 
         Organization organization = Organization.builder()
                 .name("Restaurant")
@@ -75,102 +67,44 @@ public class DataInitialization implements CommandLineRunner {
                 .build();
         organizationRepository.save(organization1);
 
-        Booking booking1 = Booking.builder()
+        Reservation reservation1 = Reservation.builder()
                 .beginning(10)
                 .ending(11)
-                .user(user)
-                .organization(organization)
-                .build();
-        Booking booking2 = Booking.builder()
-                .beginning(11)
-                .ending(12)
-                .user(user1)
-                .organization(organization1)
-                .build();
-        Booking booking3 = Booking.builder()
-                .beginning(12)
-                .ending(13)
-                .user(null)
-                .organization(organization1)
-                .build();
-        Booking booking4 = Booking.builder()
-                .beginning(13)
-                .ending(14)
-                .user(null)
-                .organization(organization1)
-                .build();
-        Booking booking5 = Booking.builder()
-                .beginning(15)
-                .ending(16)
-                .user(null)
-                .organization(organization1)
-                .build();
-        Booking booking6 = Booking.builder()
-                .beginning(16)
-                .ending(17)
-                .user(null)
-                .organization(organization1)
-                .build();
-        Booking booking7 = Booking.builder()
-                .beginning(17)
-                .ending(18)
-                .user(null)
-                .organization(organization1)
-                .build();
-        Booking booking8 = Booking.builder()
-                .beginning(18)
-                .ending(19)
-                .user(null)
-                .organization(organization)
-                .build();
-
-        bookingRepository.save(booking1);
-        bookingRepository.save(booking2);
-        bookingRepository.save(booking3);
-        bookingRepository.save(booking4);
-        bookingRepository.save(booking5);
-        bookingRepository.save(booking6);
-        bookingRepository.save(booking7);
-        bookingRepository.save(booking8);
-
-        Reservation reservation1 = Reservation.builder()
-                .beginning(booking1.getBeginning())
-                .ending(booking1.getEnding())
                 .numbersOfTables(10)
                 .build();
         Reservation reservation2 = Reservation.builder()
-                .beginning(booking2.getBeginning())
-                .ending(booking2.getEnding())
+                .beginning(11)
+                .ending(12)
                 .numbersOfTables(10)
                 .build();
         Reservation reservation3 = Reservation.builder()
-                .beginning(booking3.getBeginning())
-                .ending(booking3.getEnding())
+                .beginning(12)
+                .ending(13)
                 .numbersOfTables(10)
                 .build();
         Reservation reservation4 = Reservation.builder()
-                .beginning(booking4.getBeginning())
-                .ending(booking4.getEnding())
+                .beginning(13)
+                .ending(14)
                 .numbersOfTables(10)
                 .build();
         Reservation reservation5 = Reservation.builder()
-                .beginning(booking5.getBeginning())
-                .ending(booking5.getEnding())
+                .beginning(14)
+                .ending(15)
                 .numbersOfTables(10)
                 .build();
         Reservation reservation6 = Reservation.builder()
-                .beginning(booking6.getBeginning())
-                .ending(booking6.getEnding())
+                .beginning(15)
+                .ending(16)
                 .numbersOfTables(10)
                 .build();
         Reservation reservation7 = Reservation.builder()
-                .beginning(booking7.getBeginning())
-                .ending(booking7.getEnding())
+                .beginning(16)
+                .ending(17)
                 .numbersOfTables(10)
                 .build();
         Reservation reservation8 = Reservation.builder()
-                .beginning(booking8.getBeginning())
-                .ending(booking8.getEnding())
+                .beginning(17)
+                .ending(18)
                 .numbersOfTables(10)
                 .build();
 

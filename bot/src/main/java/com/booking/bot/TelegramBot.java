@@ -81,22 +81,32 @@ public class TelegramBot extends TelegramLongPollingBot {
             Reservation reservationDtoForBooking = createReservationDtoForBooking(Long.valueOf(param[1]), Integer.parseInt(param[2]),
                     Integer.parseInt(param[3]), Integer.parseInt(param[4]));
             BookingDto bookingDto = createBookingForSending(userDto, organizationDto.id(), reservationDtoForBooking);
-            System.out.println(bookingDto);
-//            Void result = client.post()
-//                    .uri("/bookings")
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .bodyValue(bookingDto)
-//                    .retrieve()
-//                    .bodyToMono(Void.class).share().block();
-
+            System.out.println(param[1]);
+            List<Reservation> reservation = organizationDto.reservationsList();
+            Reservation reservation1 = reservation.stream().filter(e -> e.getId() == Long.valueOf(param[1])).findFirst().get();
+            reservation1.setNumbersOfTables(reservation1.getNumbersOfTables() - 1);
+            Integer index = organizationDto.reservationsList().indexOf(reservation1);
+            organizationDto.reservationsList().set(index, reservation1);
+            OrganizationDto organizationDto1 = organizationDto;
+            String resultForOrganization = client
+                    .post()
+                    .uri("/organization")
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .body(Mono.just(organizationDto1), OrganizationDto.class)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .share()
+                    .block();
+            System.out.println(organizationDto.reservationsList());
             String result = client
                     .post()
                     .uri("/bookings")
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                     .body(Mono.just(bookingDto), BookingDto.class)
                     .retrieve()
-                    .bodyToMono(String.class).share().block();
-            System.out.println(result.toString());
+                    .bodyToMono(String.class)
+                    .share()
+                    .block();
         }
         if (param[0].contains("Org")) {
             Mono<OrganizationDto[]> organizationDtoMono
@@ -207,30 +217,35 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void createButtonsForReservations(Message message) throws TelegramApiException {
 
         List<Reservation> reservationDtos = organizationDto.reservationsList();
-        List<List<InlineKeyboardButton>> buttons1 = new ArrayList<>();
+        List<List<InlineKeyboardButton>> buttonsForReservation = new ArrayList<>();
+        reservationDtos.removeIf(reservation -> reservation.getNumbersOfTables() <= 0);
         userDto = new UserDto(message.getFrom().getId(), message.getFrom().getUserName());
         for (Reservation reservation : reservationDtos) {
-            buttons1.add(
-                    Arrays.asList(
-                            InlineKeyboardButton.builder()
-                                    .text(reservation.beginning() + "-" + reservation.ending())
-                                    .callbackData("Reservation:" + reservation.id() + ":"
-                                            + reservation.beginning() + ":"
-                                            + reservation.ending() + ":"
-                                            + reservation.numbersOfTables())
-                                    .build()));
+//            if(reservation.getNumbersOfTables() > 0) {
+//                System.out.println(reservation.getNumbersOfTables() + "OOOOOO");
+                buttonsForReservation.add(
+                        Arrays.asList(
+                                InlineKeyboardButton.builder()
+                                        .text("Доступное время: " + reservation.getBeginning() + "-"
+                                                + reservation.getEnding() + " Количество свободных столов: " + reservation.getNumbersOfTables())
+                                        .callbackData("Reservation:" + reservation.getId() + ":"
+                                                + reservation.getBeginning() + ":"
+                                                + reservation.getEnding() + ":"
+                                                + reservation.getNumbersOfTables())
+                                        .build()));
+//            }
         }
         execute(
                 SendMessage.builder()
                         .text("Please choose product category")
                         .chatId(message.getChatId().toString())
-                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons1).build())
+                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttonsForReservation).build())
                         .build());
     }
 
 
     private void createButtonsForOrganization(Message message) throws TelegramApiException {
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        List<List<InlineKeyboardButton>> buttonsForOrganization = new ArrayList<>();
         Mono<OrganizationDto[]> organizationDtoMono = client.get().uri("/organization")
                 .retrieve().bodyToMono(OrganizationDto[].class);
         OrganizationDto[] organizationDto = organizationDtoMono.share().block();
@@ -245,7 +260,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
         List<OrganizationDto> listOfOrganizations = Arrays.stream(organizationDto).collect(Collectors.toList());
         for (OrganizationDto organizationDtoTemp : listOfOrganizations) {
-            buttons.add(
+            buttonsForOrganization.add(
                     Arrays.asList(
                             InlineKeyboardButton.builder()
                                     .text(organizationDtoTemp.name())
@@ -257,7 +272,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 SendMessage.builder()
                         .text("Please choose product organization")
                         .chatId(message.getChatId().toString())
-                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
+                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttonsForOrganization).build())
                         .build());
         execute(
                 SendMessage.builder()

@@ -94,16 +94,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void addNewBooking(BookingDto bookingDto) {
         Organization organization = organizationRepository.getById(bookingDto.organizationId());
-        System.out.println("orga" + organization);
-//        User user = userRepository.getById(bookingDto.userDto().id());
-//        System.out.println("user" + user);
-        System.out.println("Done service");
-//        if (user == null) {
-//            user = User.builder()
-//                    .name("Default")
-//                    .build();
-//        }
-        User user = User.builder().build();
+        User user = User.builder()
+                .id(bookingDto.userDto().id())
+                .name(bookingDto.userDto().name())
+                .build();
         user = userRepository.save(user);
         Booking booking = Booking.builder()
                 .beginning(bookingDto.reservation().getBeginning())

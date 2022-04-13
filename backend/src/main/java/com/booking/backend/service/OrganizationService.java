@@ -12,4 +12,6 @@ public interface OrganizationService {
     List<OrganizationDto> findAllByName(String name);
 
     List<OrganizationDto> getAll();
+
+    void updateOrganization(OrganizationDto organizationDto);
 }

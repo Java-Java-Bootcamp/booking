@@ -1,4 +1,16 @@
 package com.booking.bot.entity;
 
-public record Reservation(Long id,Integer beginning,Integer ending,Integer numbersOfTables) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Reservation {
+
+    private Long id;
+    private Integer beginning;
+    private Integer ending;
+    private Integer numbersOfTables;
 }

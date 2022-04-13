@@ -108,5 +108,21 @@ public class OrganizationServiceImpl implements OrganizationService {
                         organization.getCuisine()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void updateOrganization(OrganizationDto organizationDto) {
+        Organization organization = Organization.builder()
+                .id(organizationDto.id())
+                .name(organizationDto.name())
+                .schedule(organizationDto.schedule())
+                .numbersOfTables(organizationDto.numbersOfTables())
+                .averageCheck(organizationDto.averageCheck())
+                .rating(organizationDto.rating())
+                .cuisine(organizationDto.cuisines())
+                .reservations(organizationDto.reservationsList())
+                .build();
+        System.out.println(organizationDto.id());
+        organizationRepository.save(organization);
+    }
 }
 

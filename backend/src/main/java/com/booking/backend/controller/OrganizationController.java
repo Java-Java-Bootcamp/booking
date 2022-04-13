@@ -1,12 +1,10 @@
 package com.booking.backend.controller;
 
 
+import com.booking.backend.dto.BookingDto;
 import com.booking.backend.dto.OrganizationDto;
 import com.booking.backend.service.OrganizationService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,5 +35,11 @@ public class OrganizationController {
     @RequestMapping(value = "/organization")
     public List<OrganizationDto> getAllOrganization() {
         return organizationService.getAll();
+    }
+
+    @PostMapping("/organization")
+    public void addNewBooking(@RequestBody OrganizationDto organizationDto) {
+        System.out.println("ok");
+        organizationService.updateOrganization(organizationDto);
     }
 }
