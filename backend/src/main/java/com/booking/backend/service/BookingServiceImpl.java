@@ -93,7 +93,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void addNewBooking(BookingDto bookingDto) {
-        Organization organization = organizationRepository.getById(bookingDto.organizationId());
+        Organization organization = organizationRepository.getById(bookingDto.organizationDto().id());
         User user = User.builder()
                 .id(bookingDto.userDto().id())
                 .name(bookingDto.userDto().name())

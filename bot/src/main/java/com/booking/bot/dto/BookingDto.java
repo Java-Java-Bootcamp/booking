@@ -7,7 +7,7 @@ import java.util.List;
 
 public record BookingDto(Reservation reservation,
                          UserDto userDto,
-                         Long organizationId)
+                         OrganizationDto organizationDto)
 {
 
     //в бэкенде получить эту сущность

@@ -65,9 +65,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private BookingDto createBookingForSending(UserDto userDto, Long organizationId, Reservation reservation) {
+    private BookingDto createBookingForSending(UserDto userDto, OrganizationDto organizationDto, Reservation reservation) {
         return new BookingDto(reservation,
-                userDto, organizationId);
+                userDto, organizationDto);
     }
 
     private Reservation createReservationDtoForBooking(Long id, Integer beginning, Integer ending, Integer numbersOfTable) {
@@ -80,7 +80,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (param[0].contains("Res")) {
             Reservation reservationDtoForBooking = createReservationDtoForBooking(Long.valueOf(param[1]), Integer.parseInt(param[2]),
                     Integer.parseInt(param[3]), Integer.parseInt(param[4]));
-            BookingDto bookingDto = createBookingForSending(userDto, organizationDto.id(), reservationDtoForBooking);
+            BookingDto bookingDto = createBookingForSending(userDto, organizationDto, reservationDtoForBooking);
             System.out.println(param[1]);
             List<Reservation> reservation = organizationDto.reservationsList();
             Reservation reservation1 = reservation.stream().filter(e -> e.getId() == Long.valueOf(param[1])).findFirst().get();
