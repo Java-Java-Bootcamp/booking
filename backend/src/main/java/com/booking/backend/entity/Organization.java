@@ -31,7 +31,7 @@ public class Organization {
 
     private Double rating;
 
-    @ManyToMany
+    @OneToMany
     private List<Reservation> reservations;
 
     @ManyToMany

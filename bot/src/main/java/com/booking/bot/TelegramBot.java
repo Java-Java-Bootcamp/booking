@@ -1,16 +1,17 @@
 package com.booking.bot;
 
+import com.booking.bot.adapter.BookingAdapter;
 import com.booking.bot.dto.BookingDto;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.UserDto;
 import com.booking.bot.entity.Reservation;
+import com.booking.bot.service.BookingService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -20,12 +21,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import reactor.core.publisher.Mono;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@NoArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
     @Value("${bot.username}")
@@ -33,6 +34,19 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Value("${bot.token}")
     private String token;
+
+    private Map<Long, String> statusChat = new HashMap<>();
+
+    private BookingAdapter bookingAdapter;
+    private BookingService bookingService;
+    private OrganizationDto organizationDto;
+    private UserDto userDto;
+
+    @Autowired
+    public TelegramBot(BookingAdapter bookingAdapter, BookingService bookingService) {
+        this.bookingAdapter = bookingAdapter;
+        this.bookingService = bookingService;
+    }
 
     @Override
     public String getBotUsername() {
@@ -43,11 +57,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     public String getBotToken() {
         return token;
     }
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private final WebClient client = WebClient.create("http://localhost:8080");
-    private OrganizationDto organizationDto;
-    private UserDto userDto;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -65,58 +74,23 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private BookingDto createBookingForSending(UserDto userDto, OrganizationDto organizationDto, Reservation reservation) {
-        return new BookingDto(reservation,
-                userDto, organizationDto);
-    }
-
-    private Reservation createReservationDtoForBooking(Long id, Integer beginning, Integer ending, Integer numbersOfTable) {
-        return new Reservation(id, beginning, ending, numbersOfTable);
-    }
-
-
     private void handleCallback(CallbackQuery callbackQuery) {
         String[] param = callbackQuery.getData().split(":");
         if (param[0].contains("Res")) {
-            Reservation reservationDtoForBooking = createReservationDtoForBooking(Long.valueOf(param[1]), Integer.parseInt(param[2]),
-                    Integer.parseInt(param[3]), Integer.parseInt(param[4]));
-            BookingDto bookingDto = createBookingForSending(userDto, organizationDto, reservationDtoForBooking);
-            System.out.println(param[1]);
-            List<Reservation> reservation = organizationDto.reservationsList();
-            Reservation reservation1 = reservation.stream().filter(e -> e.getId() == Long.valueOf(param[1])).findFirst().get();
-            reservation1.setNumbersOfTables(reservation1.getNumbersOfTables() - 1);
-            Integer index = organizationDto.reservationsList().indexOf(reservation1);
-            organizationDto.reservationsList().set(index, reservation1);
-            OrganizationDto organizationDto1 = organizationDto;
-            String resultForOrganization = client
-                    .post()
-                    .uri("/organization")
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body(Mono.just(organizationDto1), OrganizationDto.class)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .share()
-                    .block();
-            System.out.println(organizationDto.reservationsList());
-            String result = client
-                    .post()
-                    .uri("/bookings")
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .body(Mono.just(bookingDto), BookingDto.class)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .share()
-                    .block();
+            Reservation reservationForBooking = bookingService.createReservationDtoForBooking(Long.valueOf(param[1]),
+                    Integer.parseInt(param[2]), Integer.parseInt(param[3]), Integer.parseInt(param[4]));
+
+            BookingDto bookingDto = bookingService.createBookingForSending(userDto, organizationDto, reservationForBooking);
+            OrganizationDto changedOrganization = bookingService.setChangedReservationToOrganization(organizationDto, param[1]);
+
+            bookingAdapter.updateOrganizationWithNewReservation(changedOrganization, "/organization");
+            bookingAdapter.addBooking(bookingDto, "/bookings");
         }
         if (param[0].contains("Org")) {
-            Mono<OrganizationDto[]> organizationDtoMono
-                    = client.get().uri("/organization?name={name}", param[1]).retrieve().bodyToMono(OrganizationDto[].class);
-            organizationDto = Arrays.stream(organizationDtoMono.share().block()).findFirst().get();
+            organizationDto = bookingAdapter.getOrganization("/organization?name={name}", param[1]);
             System.out.println(param[1]);
         }
     }
-
-    private Map<Long, String> statusChat = new HashMap<>();
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
 
@@ -151,7 +125,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         return;
                     case "/create_reserve":
                         statusChat.put(message.getFrom().getId(), "/create_reserve");
-                        createButtonsForReservations(message);
+                        createButtonsForReservations(message, organizationDto);
                         return;
                     default:
                         execute(
@@ -170,9 +144,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         String messageText = message.getText();
         Optional<String> messageString = parseString(messageText);
         if (statusChat.get(message.getFrom().getId()) != null && statusChat.get(message.getFrom().getId()).equals("/find")) {
-            Mono<OrganizationDto[]> organizationDtoMono = client.get().uri("/organization?name={name}", messageString.get()).retrieve().bodyToMono(OrganizationDto[].class);
-            OrganizationDto[] organizationDto = organizationDtoMono.share().block();
-            OrganizationDto org = organizationDto[0];
+            OrganizationDto org = bookingAdapter.getOrganization("/organization?name={name}", messageString.get());
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Название: " + org.name() + "\n" +
                     "Расписание: " + org.schedule() + "\n" +
@@ -187,9 +159,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             );
             statusChat.put(message.getFrom().getId(), "free");
         } else if (statusChat.get(message.getFrom().getId()).equals("/organizations")) {
-            Mono<OrganizationDto[]> organizationDtoMono
-                    = client.get().uri("organization?pageNo=0&pageSize=2&sortBy=name").retrieve().bodyToMono(OrganizationDto[].class);
-            OrganizationDto[] organizationDto = organizationDtoMono.share().block();
+            OrganizationDto[] organizationDto = bookingAdapter.getArrayOrganizations("organization?pageNo=0&pageSize=2&sortBy=name");
             System.out.println(33);
             StringBuilder stringBuilder = new StringBuilder();
             for (OrganizationDto o : organizationDto) {
@@ -215,7 +185,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     }
 
-    private void createButtonsForReservations(Message message) throws TelegramApiException {
+
+    private void createButtonsForReservations(Message message, OrganizationDto organizationDto) throws TelegramApiException {
 
         List<Reservation> reservationDtos = organizationDto.reservationsList();
         List<List<InlineKeyboardButton>> buttonsForReservation = new ArrayList<>();
@@ -244,9 +215,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void createButtonsForOrganization(Message message) throws TelegramApiException {
         List<List<InlineKeyboardButton>> buttonsForOrganization = new ArrayList<>();
-        Mono<OrganizationDto[]> organizationDtoMono = client.get().uri("/organization")
-                .retrieve().bodyToMono(OrganizationDto[].class);
-        OrganizationDto[] organizationDto = organizationDtoMono.share().block();
+        OrganizationDto[] organizationDto = bookingAdapter.getArrayOrganizations("/organization");
         if (organizationDto.length == 0) {
             execute(
                     SendMessage.builder()

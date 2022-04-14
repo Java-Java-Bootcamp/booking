@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Builder
 public class Reservation {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
