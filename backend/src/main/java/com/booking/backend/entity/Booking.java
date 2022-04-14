@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -30,7 +28,7 @@ public class Booking {
     private boolean booked;
 
     @ManyToOne
-    private User user;
+    private Client client;
 
     @ManyToOne
     private Organization organization;

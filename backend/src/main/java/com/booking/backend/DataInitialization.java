@@ -15,17 +15,17 @@ public class DataInitialization implements CommandLineRunner {
 
     private BookingRepository bookingRepository;
     private OrganizationRepository organizationRepository;
-    private UserRepository userRepository;
+    private ClientRepository clientRepository;
     private CuisineRepository cuisineRepository;
     private ReservRepo reservRepo;
 
     @Autowired
     public DataInitialization(BookingRepository bookingRepository, OrganizationRepository organizationRepository,
-                              UserRepository userRepository, CuisineRepository cuisineRepository,
+                              ClientRepository clientRepository, CuisineRepository cuisineRepository,
                               ReservRepo reservRepo) {
         this.bookingRepository = bookingRepository;
         this.organizationRepository = organizationRepository;
-        this.userRepository = userRepository;
+        this.clientRepository = clientRepository;
         this.cuisineRepository = cuisineRepository;
         this.reservRepo = reservRepo;
     }
@@ -44,14 +44,14 @@ public class DataInitialization implements CommandLineRunner {
                 .build();
         cuisine1 = cuisineRepository.save(cuisine1);
 
-        User user = User.builder()
+        Client client = Client.builder()
                 .name("Alex")
                 .build();
-        userRepository.save(user);
-        User user1 = User.builder()
+        clientRepository.save(client);
+        Client client1 = Client.builder()
                 .name("Dima")
                 .build();
-        userRepository.save(user1);
+        clientRepository.save(client1);
 
         Organization organization = Organization.builder()
                 .name("Restaurant")
@@ -79,56 +79,56 @@ public class DataInitialization implements CommandLineRunner {
                 .beginning(10)
                 .ending(11)
                 .booked(false)
-                .user(user)
+                .client(client)
                 .organization(organization)
                 .build();
         Booking booking2 = Booking.builder()
                 .beginning(11)
                 .ending(12)
                 .booked(false)
-                .user(user1)
+                .client(client1)
                 .organization(organization1)
                 .build();
         Booking booking3 = Booking.builder()
                 .beginning(12)
                 .ending(13)
                 .booked(true)
-                .user(null)
+                .client(null)
                 .organization(organization1)
                 .build();
         Booking booking4 = Booking.builder()
                 .beginning(13)
                 .ending(14)
                 .booked(true)
-                .user(null)
+                .client(null)
                 .organization(organization1)
                 .build();
         Booking booking5 = Booking.builder()
                 .beginning(15)
                 .ending(16)
                 .booked(true)
-                .user(null)
+                .client(null)
                 .organization(organization1)
                 .build();
         Booking booking6 = Booking.builder()
                 .beginning(16)
                 .ending(17)
                 .booked(true)
-                .user(null)
+                .client(null)
                 .organization(organization1)
                 .build();
         Booking booking7 = Booking.builder()
                 .beginning(17)
                 .ending(18)
                 .booked(true)
-                .user(null)
+                .client(null)
                 .organization(organization1)
                 .build();
         Booking booking8 = Booking.builder()
                 .beginning(18)
                 .ending(19)
                 .booked(true)
-                .user(null)
+                .client(null)
                 .organization(organization)
                 .build();
 
