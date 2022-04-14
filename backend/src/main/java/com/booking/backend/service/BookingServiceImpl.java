@@ -1,8 +1,11 @@
 package com.booking.backend.service;
 
 import com.booking.backend.dto.BookingDto;
+import com.booking.backend.dto.OrganizationDto;
+import com.booking.backend.dto.UserDto;
 import com.booking.backend.entity.Booking;
 import com.booking.backend.entity.Organization;
+import com.booking.backend.entity.Reservation;
 import com.booking.backend.entity.User;
 import com.booking.backend.repository.BookingRepository;
 import com.booking.backend.repository.OrganizationRepository;
@@ -37,57 +40,54 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getAllBookings(Integer pageNo, Integer pageSize, String sortBy) {
-//        if (sortBy.equals("rate")) {
-//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.rating"));
-//            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-//            if (pagedResult.hasContent()) {
-//                return pagedResult.getContent().stream()
-//                        .map(e -> new BookingDto(e.getId(),
-//                                e.getOrganization().getName(),
-//                                e.getOrganization().getRating(),
-//                                e.getOrganization().getAverageCheck(),
-//                                e.getOrganization().getCuisine(),
-//                                e.getOrganization().getReservations()
-//                                        .stream()
-//                                        .filter(r -> r.getNumbersOfTables() > 0)
-//                                        .collect(Collectors.toList())))
-//                        .collect(Collectors.toList());
-//            } else {
-//                return new ArrayList<>();
-//            }
-//        }
-//        if (sortBy.equals("bill")) {
-//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.averageCheck"));
-//            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-//            if (pagedResult.hasContent()) {
-//                return pagedResult.getContent().stream()
-//                        .map(e -> new BookingDto(e.getOrganization().getReservations().stream().ma,
-//                                e.getUser(),
-//                                e.getOrganization().getId()))
-//                        .collect(Collectors.toList());
-//            } else {
-//                return new ArrayList<>();
-//            }
-//        }
-//        if (sortBy.equals("time")) {
-//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("dateOfBeginning"));
-//            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-//            if (pagedResult.hasContent()) {
-//                return pagedResult.getContent().stream()
-//                        .map(e -> new BookingDto(e.getId(),
-//                                e.getOrganization().getName(),
-//                                e.getOrganization().getRating(),
-//                                e.getOrganization().getAverageCheck(),
-//                                e.getOrganization().getCuisine(),
-//                                e.getOrganization().getReservations()
-//                                        .stream()
-//                                        .filter(r -> r.getNumbersOfTables() > 0)
-//                                        .collect(Collectors.toList())))
-//                        .collect(Collectors.toList());
-//            } else {
-//                return new ArrayList<>();
-//            }
-//        }
+        if (sortBy.equals("rate")) {
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.rating"));
+            Page<Booking> pagedResult = bookingRepository.findAll(paging);
+            if (pagedResult.hasContent()) {
+                return pagedResult.getContent().stream()
+                        .map(e -> new BookingDto(new Reservation(null, e.getBeginning(), e.getEnding(), 0),
+                                new UserDto(e.getUser().getId(), e.getUser().getName()),
+                                new OrganizationDto(e.getOrganization().getId(), e.getOrganization().getName(),
+                                        e.getOrganization().getSchedule(), e.getOrganization().getNumbersOfTables(),
+                                        e.getOrganization().getAverageCheck(), e.getOrganization().getRating(),
+                                        null, e.getOrganization().getCuisine())))
+                        .collect(Collectors.toList());
+            } else {
+                return new ArrayList<>();
+            }
+        }
+        if (sortBy.equals("bill")) {
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.averageCheck"));
+            Page<Booking> pagedResult = bookingRepository.findAll(paging);
+            if (pagedResult.hasContent()) {
+                return pagedResult.getContent().stream()
+                        .map(e -> new BookingDto(new Reservation(null, e.getBeginning(), e.getEnding(), 0),
+                                new UserDto(e.getUser().getId(), e.getUser().getName()),
+                                new OrganizationDto(e.getOrganization().getId(), e.getOrganization().getName(),
+                                        e.getOrganization().getSchedule(), e.getOrganization().getNumbersOfTables(),
+                                        e.getOrganization().getAverageCheck(), e.getOrganization().getRating(),
+                                        null, e.getOrganization().getCuisine())))
+                        .collect(Collectors.toList());
+            } else {
+                return new ArrayList<>();
+            }
+        }
+        if (sortBy.equals("time")) {
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("dateOfBeginning"));
+            Page<Booking> pagedResult = bookingRepository.findAll(paging);
+            if (pagedResult.hasContent()) {
+                return pagedResult.getContent().stream()
+                        .map(e -> new BookingDto(new Reservation(null, e.getBeginning(), e.getEnding(), 0),
+                                new UserDto(e.getUser().getId(), e.getUser().getName()),
+                                new OrganizationDto(e.getOrganization().getId(), e.getOrganization().getName(),
+                                        e.getOrganization().getSchedule(), e.getOrganization().getNumbersOfTables(),
+                                        e.getOrganization().getAverageCheck(), e.getOrganization().getRating(),
+                                        null, e.getOrganization().getCuisine())))
+                        .collect(Collectors.toList());
+            } else {
+                return new ArrayList<>();
+            }
+        }
         return null;
     }
 

@@ -187,7 +187,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             );
             statusChat.put(message.getFrom().getId(), "free");
         } else if (statusChat.get(message.getFrom().getId()).equals("/organizations")) {
-            Mono<OrganizationDto[]> organizationDtoMono = client.get().uri("organization?pageNo=0&pageSize=2&sortBy=name").retrieve().bodyToMono(OrganizationDto[].class);
+            Mono<OrganizationDto[]> organizationDtoMono
+                    = client.get().uri("organization?pageNo=0&pageSize=2&sortBy=name").retrieve().bodyToMono(OrganizationDto[].class);
             OrganizationDto[] organizationDto = organizationDtoMono.share().block();
             System.out.println(33);
             StringBuilder stringBuilder = new StringBuilder();
@@ -221,19 +222,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         reservationDtos.removeIf(reservation -> reservation.getNumbersOfTables() <= 0);
         userDto = new UserDto(message.getFrom().getId(), message.getFrom().getUserName());
         for (Reservation reservation : reservationDtos) {
-//            if(reservation.getNumbersOfTables() > 0) {
-//                System.out.println(reservation.getNumbersOfTables() + "OOOOOO");
-                buttonsForReservation.add(
-                        Arrays.asList(
-                                InlineKeyboardButton.builder()
-                                        .text("Доступное время: " + reservation.getBeginning() + "-"
-                                                + reservation.getEnding() + " Количество свободных столов: " + reservation.getNumbersOfTables())
-                                        .callbackData("Reservation:" + reservation.getId() + ":"
-                                                + reservation.getBeginning() + ":"
-                                                + reservation.getEnding() + ":"
-                                                + reservation.getNumbersOfTables())
-                                        .build()));
-//            }
+            buttonsForReservation.add(
+                    Arrays.asList(
+                            InlineKeyboardButton.builder()
+                                    .text("Доступное время: " + reservation.getBeginning() + "-"
+                                            + reservation.getEnding() + " Количество свободных столов: " + reservation.getNumbersOfTables())
+                                    .callbackData("Reservation:" + reservation.getId() + ":"
+                                            + reservation.getBeginning() + ":"
+                                            + reservation.getEnding() + ":"
+                                            + reservation.getNumbersOfTables())
+                                    .build()));
         }
         execute(
                 SendMessage.builder()
