@@ -96,21 +96,9 @@ public class TelegramBot extends TelegramLongPollingBot {
         if ((personDto == null || personDto.id().equals(message.getFrom().getId()))
                 && statusChat.isEmpty()) {
             statusChat.put(message.getFrom().getId(), "/sign_up");
-//            execute(
-//                    SendMessage.builder()
-//                            .text("Sign up, please: /sign_up")
-//                            .chatId(message.getChatId().toString())
-//                            .build()
-//            );
             executeString("Sign up, please: /sign_up", message);
             return;
         } else if (personDto != null && personDto.id().equals(message.getFrom().getId())) {
-//            execute(
-//                    SendMessage.builder()
-//                            .text("Hello, " + personDto.name())
-//                            .chatId(message.getChatId().toString())
-//                            .build()
-//            );
             executeString("Hello, " + personDto.name(), message);
             return;
         }
@@ -123,32 +111,14 @@ public class TelegramBot extends TelegramLongPollingBot {
                 switch (command) {
                     case "/sign_up":
                         statusChat.put(message.getFrom().getId(), "/sign_up");
-//                        execute(
-//                                SendMessage.builder()
-//                                        .text("Type your name, please")
-//                                        .chatId(message.getChatId().toString())
-//                                        .build()
-//                        );
                         executeString("Type your name, please", message);
                         return;
                     case "/find":
                         statusChat.put(message.getFrom().getId(), "/find");
-//                        execute(
-//                                SendMessage.builder()
-//                                        .text("Введите имя организации")
-//                                        .chatId(message.getChatId().toString())
-//                                        .build()
-//                        );
                         executeString("Введите имя организации", message);
                         break;
                     case "/organizations":
                         statusChat.put(message.getFrom().getId(), "/organizations");
-//                        execute(
-//                                SendMessage.builder()
-//                                        .text("Список организаций:")
-//                                        .chatId(message.getChatId().toString())
-//                                        .build()
-//                        );
                         executeString("Список организаций: ", message);
                         break;
                     case "/create_booking":
@@ -161,14 +131,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                         System.out.println("switch " + organizationDto);
                         return;
                     default:
-//                        execute(
-//                                SendMessage.builder()
-//                                        .text("Сервис по бронированию.\n" +
-//                                                "/find - поиск бронирования.\n" +
-//                                                "/organizations - просмотр доступных организаций.")
-//                                        .chatId(message.getChatId().toString())
-//                                        .build()
-//                        );
                         executeString("Сервис по бронированию.\n" +
                                                 "/find - поиск бронирования.\n" +
                                                 "/organizations - просмотр доступных организаций.", message);
@@ -185,12 +147,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             case "/sign_up" -> {
                 bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), messageString.get()), "/person");
                 statusChat.put(message.getFrom().getId(), "free");
-//                execute(
-//                        SendMessage.builder()
-//                                .text("Sign up is done")
-//                                .chatId(message.getChatId().toString())
-//                                .build()
-//                );
                 executeString("Sign up is done", message);
             }
 
@@ -201,54 +157,17 @@ public class TelegramBot extends TelegramLongPollingBot {
                         "Расписание: " + org.schedule() + "\n" +
                         "Средний чек: " + org.averageCheck() + "\n" +
                         "Рейтинг: " + org.rating() + "\n");
-//                execute(
-//                        SendMessage.builder()
-//                                .text(stringBuilder.toString())
-//                                .chatId(message.getChatId().toString())
-//                                .build()
-//                );
                 executeString(stringBuilder.toString(), message);
                 statusChat.put(message.getFrom().getId(), "free");
             }
         }
-//        if (mapValue.equals("/sign_up")) {
-//            bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), messageString.get()), "/person");
-//            statusChat.put(message.getFrom().getId(), "free");
-//            execute(
-//                    SendMessage.builder()
-//                            .text("Sign up is done")
-//                            .chatId(message.getChatId().toString())
-//                            .build()
-//            );
-//        }
-//        else if (statusChat.get(message.getFrom().getId()) != null && statusChat.get(message.getFrom().getId()).equals("/find")) {
-//            OrganizationDto org = bookingAdapter.getOrganization("/organization?name={name}", messageString.get());
-//            StringBuilder stringBuilder = new StringBuilder();
-//            stringBuilder.append("Название: " + org.name() + "\n" +
-//                    "Расписание: " + org.schedule() + "\n" +
-////                    "Кол-во столов: " + org.numbersOfTables() + "\n" +
-//                    "Средний чек: " + org.averageCheck() + "\n" +
-//                    "Рейтинг: " + org.rating() + "\n");
-//            execute(
-//                    SendMessage.builder()
-//                            .text(stringBuilder.toString())
-//                            .chatId(message.getChatId().toString())
-//                            .build()
-//            );
-//            statusChat.put(message.getFrom().getId(), "free");
-//    }
         if (statusChat.get(message.getFrom().getId()).equals("/organizations")) {
             OrganizationDto[] organizationDto = bookingAdapter.getArrayOrganizations("organization?pageNo=0&pageSize=2&sortBy=name");
             StringBuilder stringBuilder = new StringBuilder();
             for (OrganizationDto o : organizationDto) {
                 stringBuilder.append(o.name() + "\n");
             }
-//            execute(
-//                    SendMessage.builder()
-//                            .text(stringBuilder.toString())
-//                            .chatId(message.getChatId().toString())
-//                            .build()
-//            );
+
             executeString(stringBuilder.toString(), message);
             statusChat.put(message.getFrom().getId(), "free");
         } else {
@@ -256,15 +175,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                     "/hello - поздороваться \n" +
                     "/find - поиск бронирования.\n" +
                     "/organizations - просмотр доступных организаций.", message);
-//            execute(
-//                    SendMessage.builder()
-//                            .text("Сервис по бронированию.\n" +
-//                                    "/hello - поздороваться \n" +
-//                                    "/find - поиск бронирования.\n" +
-//                                    "/organizations - просмотр доступных организаций.")
-//                            .chatId(message.getChatId().toString())
-//                            .build()
-//            );
         }
 
     }
@@ -313,12 +223,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         List<List<InlineKeyboardButton>> buttonsForOrganization = new ArrayList<>();
         OrganizationDto[] organizationDto = bookingAdapter.getArrayOrganizations("/organization");
         if (organizationDto.length == 0) {
-            execute(
-                    SendMessage.builder()
-                            .text("Organizations not found")
-                            .chatId(message.getChatId().toString())
-                            .build()
-            );
+            executeString("Organizations not found", message);
             return;
         }
         List<OrganizationDto> listOfOrganizations = Arrays.stream(organizationDto).collect(Collectors.toList());
@@ -331,18 +236,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                                     .build()));
         }
 
-        execute(
-                SendMessage.builder()
-                        .text("Please choose product organization")
-                        .chatId(message.getChatId().toString())
-                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttonsForOrganization).build())
-                        .build());
-        execute(
-                SendMessage.builder()
-                        .text("Выберите время: /create_reserve")
-                        .chatId(message.getChatId().toString())
-                        .build()
-        );
+        executeString("Please choose product organization", message);
+        executeString("Выберите время: /create_reserve", message);
         return;
     }
 
