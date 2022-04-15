@@ -13,6 +13,7 @@ public interface Mapper {
     Booking convertFromBookingDtoToBooking(BookingDto bookingDto);
 
     Person convertFromPersonDtoToPerson(PersonDto personDto);
+    PersonDto convertFromPersonToPersonDto(Person person);
 
     OrganizationDto convertFromOrganizationToOrganizationDto(Organization organization);
     Organization convertFromOrganizationDtoToOrganization(OrganizationDto organizationDto);

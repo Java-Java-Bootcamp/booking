@@ -27,6 +27,11 @@ public class MapperImpl implements Mapper {
     }
 
     @Override
+    public PersonDto convertFromPersonToPersonDto(Person person) {
+        return new PersonDto(person.getId(), person.getName());
+    }
+
+    @Override
     public OrganizationDto convertFromOrganizationToOrganizationDto(Organization organization) {
         return new OrganizationDto(organization.getId(), organization.getName(),
                 organization.getSchedule(), organization.getAverageCheck(),

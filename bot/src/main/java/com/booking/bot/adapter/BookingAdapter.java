@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@Data
 public class BookingAdapter {
 
     private final WebClient client;
