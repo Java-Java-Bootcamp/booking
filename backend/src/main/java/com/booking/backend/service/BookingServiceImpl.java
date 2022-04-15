@@ -1,15 +1,11 @@
 package com.booking.backend.service;
 
 import com.booking.backend.dto.BookingDto;
-import com.booking.backend.dto.OrganizationDto;
-import com.booking.backend.dto.UserDto;
 import com.booking.backend.entity.Booking;
-import com.booking.backend.entity.Organization;
-import com.booking.backend.entity.Reservation;
-import com.booking.backend.entity.User;
+import com.booking.backend.mapper.BookingMapper;
 import com.booking.backend.repository.BookingRepository;
 import com.booking.backend.repository.OrganizationRepository;
-import com.booking.backend.repository.UserRepository;
+import com.booking.backend.repository.PersonRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,15 +21,19 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final OrganizationRepository organizationRepository;
-    private final UserRepository userRepository;
+    private final PersonRepository personRepository;
+    private BookingMapper bookingMapper;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, OrganizationRepository organizationRepository, UserRepository userRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, OrganizationRepository organizationRepository,
+                              PersonRepository personRepository, BookingMapper bookingMapper) {
         this.bookingRepository = bookingRepository;
         this.organizationRepository = organizationRepository;
-        this.userRepository = userRepository;
+        this.personRepository = personRepository;
+        this.bookingMapper = bookingMapper;
     }
 
-//    @Override
+
+    //    @Override
 //    public List<Booking> findAllByBookedFalseAndOrganizationName(String nameOfOrganization) {
 //        return bookingRepository.getAllByBookedTrueAndOrganizationName(nameOfOrganization);
 //    }
@@ -45,28 +45,20 @@ public class BookingServiceImpl implements BookingService {
             Page<Booking> pagedResult = bookingRepository.findAll(paging);
             if (pagedResult.hasContent()) {
                 return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(new Reservation(null, e.getBeginning(), e.getEnding(), 0),
-                                new UserDto(e.getUser().getId(), e.getUser().getName()),
-                                new OrganizationDto(e.getOrganization().getId(), e.getOrganization().getName(),
-                                        e.getOrganization().getSchedule(), e.getOrganization().getNumbersOfTables(),
-                                        e.getOrganization().getAverageCheck(), e.getOrganization().getRating(),
-                                        null, e.getOrganization().getCuisine())))
+                        .map(bookingMapper::convertFromBookingToBookingDto)
                         .collect(Collectors.toList());
             } else {
                 return new ArrayList<>();
             }
         }
         if (sortBy.equals("bill")) {
+            //сортировку надо переделывать потому что букинг теперь не содержит организацию
+            // можно подтягивать сюда просто организацию, тогда сортировка будет осуществляться вообще по организациям
             Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.averageCheck"));
             Page<Booking> pagedResult = bookingRepository.findAll(paging);
             if (pagedResult.hasContent()) {
                 return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(new Reservation(null, e.getBeginning(), e.getEnding(), 0),
-                                new UserDto(e.getUser().getId(), e.getUser().getName()),
-                                new OrganizationDto(e.getOrganization().getId(), e.getOrganization().getName(),
-                                        e.getOrganization().getSchedule(), e.getOrganization().getNumbersOfTables(),
-                                        e.getOrganization().getAverageCheck(), e.getOrganization().getRating(),
-                                        null, e.getOrganization().getCuisine())))
+                        .map(bookingMapper::convertFromBookingToBookingDto)
                         .collect(Collectors.toList());
             } else {
                 return new ArrayList<>();
@@ -77,12 +69,7 @@ public class BookingServiceImpl implements BookingService {
             Page<Booking> pagedResult = bookingRepository.findAll(paging);
             if (pagedResult.hasContent()) {
                 return pagedResult.getContent().stream()
-                        .map(e -> new BookingDto(new Reservation(null, e.getBeginning(), e.getEnding(), 0),
-                                new UserDto(e.getUser().getId(), e.getUser().getName()),
-                                new OrganizationDto(e.getOrganization().getId(), e.getOrganization().getName(),
-                                        e.getOrganization().getSchedule(), e.getOrganization().getNumbersOfTables(),
-                                        e.getOrganization().getAverageCheck(), e.getOrganization().getRating(),
-                                        null, e.getOrganization().getCuisine())))
+                        .map(bookingMapper::convertFromBookingToBookingDto)
                         .collect(Collectors.toList());
             } else {
                 return new ArrayList<>();
@@ -93,18 +80,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void addNewBooking(BookingDto bookingDto) {
-        Organization organization = organizationRepository.getById(bookingDto.organizationDto().id());
-        User user = User.builder()
-                .id(bookingDto.userDto().id())
-                .name(bookingDto.userDto().name())
-                .build();
-        user = userRepository.save(user);
-        Booking booking = Booking.builder()
-                .beginning(bookingDto.reservation().getBeginning())
-                .ending(bookingDto.reservation().getEnding())
-                .organization(organization)
-                .user(user)
-                .build();
-        bookingRepository.save(booking);
+        bookingRepository.save(bookingMapper.convertFromBookingDtoToBooking(bookingDto));
     }
 }

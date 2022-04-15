@@ -24,105 +24,107 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public List<OrganizationDto> getSortedOrganization(Integer pageNo, Integer pageSize, String sortBy) {
-        if (sortBy.equals("rate")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("rating"));
-            Page<Organization> pagedResult = organizationRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new OrganizationDto(e.getId(),
-                                e.getName(),
-                                e.getSchedule(),
-                                e.getNumbersOfTables(),
-                                e.getAverageCheck(),
-                                e.getRating(),
-                                e.getReservations(),
-                                e.getCuisine()))
-                        .collect(Collectors.toList());
-            } else {
-                return new ArrayList<>();
-            }
-        }
-        if (sortBy.equals("bill")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("averageCheck"));
-            Page<Organization> pagedResult = organizationRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new OrganizationDto(e.getId(),
-                                e.getName(),
-                                e.getSchedule(),
-                                e.getNumbersOfTables(),
-                                e.getAverageCheck(),
-                                e.getRating(),
-                                e.getReservations(),
-                                e.getCuisine()))
-                        .collect(Collectors.toList());
-            } else {
-                return new ArrayList<>();
-            }
-        }
-        if (sortBy.equals("name")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("name"));
-            Page<Organization> pagedResult = organizationRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new OrganizationDto(e.getId(),
-                                e.getName(),
-                                e.getSchedule(),
-                                e.getNumbersOfTables(),
-                                e.getAverageCheck(),
-                                e.getRating(),
-                                e.getReservations(),
-                                e.getCuisine()))
-                        .collect(Collectors.toList());
-            } else {
-                return new ArrayList<>();
-            }
-        }
+//        if (sortBy.equals("rate")) {
+//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("rating"));
+//            Page<Organization> pagedResult = organizationRepository.findAll(paging);
+//            if (pagedResult.hasContent()) {
+//                return pagedResult.getContent().stream()
+//                        .map(e -> new OrganizationDto(e.getId(),
+//                                e.getName(),
+//                                e.getSchedule(),
+//                                e.getNumbersOfTables(),
+//                                e.getAverageCheck(),
+//                                e.getRating(),
+////                                e.getReservations(),
+//                                e.getCuisine()))
+//                        .collect(Collectors.toList());
+//            } else {
+//                return new ArrayList<>();
+//            }
+//        }
+//        if (sortBy.equals("bill")) {
+//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("averageCheck"));
+//            Page<Organization> pagedResult = organizationRepository.findAll(paging);
+//            if (pagedResult.hasContent()) {
+//                return pagedResult.getContent().stream()
+//                        .map(e -> new OrganizationDto(e.getId(),
+//                                e.getName(),
+//                                e.getSchedule(),
+//                                e.getNumbersOfTables(),
+//                                e.getAverageCheck(),
+//                                e.getRating(),
+////                                e.getReservations(),
+//                                e.getCuisine()))
+//                        .collect(Collectors.toList());
+//            } else {
+//                return new ArrayList<>();
+//            }
+//        }
+//        if (sortBy.equals("name")) {
+//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("name"));
+//            Page<Organization> pagedResult = organizationRepository.findAll(paging);
+//            if (pagedResult.hasContent()) {
+//                return pagedResult.getContent().stream()
+//                        .map(e -> new OrganizationDto(e.getId(),
+//                                e.getName(),
+//                                e.getSchedule(),
+//                                e.getNumbersOfTables(),
+//                                e.getAverageCheck(),
+//                                e.getRating(),
+////                                e.getReservations(),
+//                                e.getCuisine()))
+//                        .collect(Collectors.toList());
+//            } else {
+//                return new ArrayList<>();
+//            }
+//        }
         return null;
     }
 
     @Override
     public List<OrganizationDto> findAllByName(String name) {
-        return organizationRepository.getAllByName(name).stream()
-                .map(e -> new OrganizationDto(e.getId(),
-                        e.getName(),
-                        e.getSchedule(),
-                        e.getNumbersOfTables(),
-                        e.getAverageCheck(),
-                        e.getRating(),
-                        e.getReservations(),
-                        e.getCuisine()))
-                .collect(Collectors.toList());
+        return null;
+//        return organizationRepository.getAllByName(name).stream()
+//                .map(e -> new OrganizationDto(e.getId(),
+//                        e.getName(),
+//                        e.getSchedule(),
+////                        e.getNumbersOfTables(),
+//                        e.getAverageCheck(),
+//                        e.getRating(),
+////                        e.getReservations(),
+////                        e.getCuisine()))
+//                .collect(Collectors.toList());
     }
 
     @Override
     public List<OrganizationDto> getAll() {
-        return organizationRepository.findAll().stream()
-                .map(organization -> new OrganizationDto(organization.getId(),
-                        organization.getName(),
-                        organization.getSchedule(),
-                        organization.getNumbersOfTables(),
-                        organization.getAverageCheck(),
-                        organization.getRating(),
-                        organization.getReservations(),
-                        organization.getCuisine()))
-                .collect(Collectors.toList());
+        return null;
+//        return organizationRepository.findAll().stream()
+//                .map(organization -> new OrganizationDto(organization.getId(),
+//                        organization.getName(),
+//                        organization.getSchedule(),
+//                        organization.getNumbersOfTables(),
+//                        organization.getAverageCheck(),
+//                        organization.getRating(),
+////                        organization.getReservations(),
+//                        organization.getCuisine()))
+//                .collect(Collectors.toList());
     }
 
     @Override
     public void updateOrganization(OrganizationDto organizationDto) {
-        Organization organization = Organization.builder()
-                .id(organizationDto.id())
-                .name(organizationDto.name())
-                .schedule(organizationDto.schedule())
-                .numbersOfTables(organizationDto.numbersOfTables())
-                .averageCheck(organizationDto.averageCheck())
-                .rating(organizationDto.rating())
-                .cuisine(organizationDto.cuisines())
-                .reservations(organizationDto.reservationsList())
-                .build();
-        System.out.println(organizationDto.id());
-        organizationRepository.save(organization);
+//        Organization organization = Organization.builder()
+//                .id(organizationDto.id())
+//                .name(organizationDto.name())
+//                .schedule(organizationDto.schedule())
+//                .numbersOfTables(organizationDto.numbersOfTables())
+//                .averageCheck(organizationDto.averageCheck())
+//                .rating(organizationDto.rating())
+//                .cuisine(organizationDto.cuisines())
+////                .reservations(organizationDto.reservationsList())
+//                .build();
+//        System.out.println(organizationDto.id());
+//        organizationRepository.save(organization);
     }
 }
 

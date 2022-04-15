@@ -25,17 +25,8 @@ public class Organization {
 
     private String schedule;
 
-    private Integer numbersOfTables;
-
     private Double averageCheck;
 
     private Double rating;
-
-    @OneToMany
-    private List<Reservation> reservations;
-
-    @ManyToMany
-    private List<Cuisine> cuisine;
-
 
 }

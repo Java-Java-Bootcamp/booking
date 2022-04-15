@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -15,22 +13,12 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 public class Booking {
-    //нужны ли нам в букинге время записи, если время записи есть в reservation?
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer beginning;
-
-    private Integer ending;
-
     @ManyToOne
-    private User user;
-    // создать команду создающую юзера
-
-    @ManyToOne
-    private Organization organization;
-
+    private Person person;
 
 }

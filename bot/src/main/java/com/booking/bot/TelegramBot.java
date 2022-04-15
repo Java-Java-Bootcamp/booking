@@ -3,11 +3,9 @@ package com.booking.bot;
 import com.booking.bot.adapter.BookingAdapter;
 import com.booking.bot.dto.BookingDto;
 import com.booking.bot.dto.OrganizationDto;
-import com.booking.bot.dto.UserDto;
-import com.booking.bot.entity.Reservation;
+import com.booking.bot.dto.PersonDto;
 import com.booking.bot.service.BookingService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +38,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private BookingAdapter bookingAdapter;
     private BookingService bookingService;
     private OrganizationDto organizationDto;
-    private UserDto userDto;
+    private PersonDto personDto;
 
     @Autowired
     public TelegramBot(BookingAdapter bookingAdapter, BookingService bookingService) {
@@ -77,30 +75,56 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void handleCallback(CallbackQuery callbackQuery) {
         String[] param = callbackQuery.getData().split(":");
         if (param[0].contains("Res")) {
-            Reservation reservationForBooking = bookingService.createReservationDtoForBooking(Long.valueOf(param[1]),
-                    Integer.parseInt(param[2]), Integer.parseInt(param[3]), Integer.parseInt(param[4]));
+//            Reservation reservationForBooking = bookingService.createReservationDtoForBooking(Long.valueOf(param[1]),
+//                    Integer.parseInt(param[2]), Integer.parseInt(param[3]), Integer.parseInt(param[4]));
 
-            BookingDto bookingDto = bookingService.createBookingForSending(userDto, organizationDto, reservationForBooking);
+//            BookingDto bookingDto = bookingService.createBookingForSending(personDto, organizationDto, reservationForBooking);
             OrganizationDto changedOrganization = bookingService.setChangedReservationToOrganization(organizationDto, param[1]);
 
-            bookingAdapter.updateOrganizationWithNewReservation(changedOrganization, "/organization");
-            bookingAdapter.addBooking(bookingDto, "/bookings");
+//            bookingAdapter.updateOrganizationWithNewReservation(changedOrganization, "/organization");
+//            bookingAdapter.addBooking(bookingDto, "/bookings");
         }
         if (param[0].contains("Org")) {
             organizationDto = bookingAdapter.getOrganization("/organization?name={name}", param[1]);
-            System.out.println(param[1]);
+            System.out.println("Callback" + param[1]);
         }
     }
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
-
+        if (personDto.id().equals(message.getFrom().getId())) {
+            execute(
+                    SendMessage.builder()
+                            .text("Hello, " + personDto.name())
+                            .chatId(message.getChatId().toString())
+                            .build()
+            );
+            return;
+        } else {
+            execute(
+                    SendMessage.builder()
+                            .text("Sign up, please: /sign_up")
+                            .chatId(message.getChatId().toString())
+                            .build()
+            );
+        }
         if (message.hasText() && message.hasEntities()) {
             Optional<MessageEntity> commandEntity =
                     message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
             if (commandEntity.isPresent()) {
                 String command =
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
+                PersonDto personDto = bookingAdapter.searchOfPerson("/someUri", message.getFrom().getId());
+
                 switch (command) {
+                    case "/sign_up":
+                        statusChat.put(message.getFrom().getId(), "/sign_up");
+                        execute(
+                                SendMessage.builder()
+                                        .text("Type your name, please")
+                                        .chatId(message.getChatId().toString())
+                                        .build()
+                        );
+                        return;
                     case "/find":
                         statusChat.put(message.getFrom().getId(), "/find");
                         execute(
@@ -126,6 +150,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     case "/create_reserve":
                         statusChat.put(message.getFrom().getId(), "/create_reserve");
                         createButtonsForReservations(message, organizationDto);
+                        System.out.println("switch " + organizationDto);
                         return;
                     default:
                         execute(
@@ -143,6 +168,10 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String messageText = message.getText();
         Optional<String> messageString = parseString(messageText);
+        if (statusChat.get(message.getFrom().getId()).equals("/sign_up")) {
+            //сохранить юзера
+            bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), messageString.get()), "/someUri");
+        }
         if (statusChat.get(message.getFrom().getId()) != null && statusChat.get(message.getFrom().getId()).equals("/find")) {
             OrganizationDto org = bookingAdapter.getOrganization("/organization?name={name}", messageString.get());
             StringBuilder stringBuilder = new StringBuilder();
@@ -176,6 +205,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             execute(
                     SendMessage.builder()
                             .text("Сервис по бронированию.\n" +
+                                    "/hello - поздороваться \n" +
                                     "/find - поиск бронирования.\n" +
                                     "/organizations - просмотр доступных организаций.")
                             .chatId(message.getChatId().toString())
@@ -188,28 +218,32 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void createButtonsForReservations(Message message, OrganizationDto organizationDto) throws TelegramApiException {
 
-        List<Reservation> reservationDtos = organizationDto.reservationsList();
-        List<List<InlineKeyboardButton>> buttonsForReservation = new ArrayList<>();
-        reservationDtos.removeIf(reservation -> reservation.getNumbersOfTables() <= 0);
-        userDto = new UserDto(message.getFrom().getId(), message.getFrom().getUserName());
-        for (Reservation reservation : reservationDtos) {
-            buttonsForReservation.add(
-                    Arrays.asList(
-                            InlineKeyboardButton.builder()
-                                    .text("Доступное время: " + reservation.getBeginning() + "-"
-                                            + reservation.getEnding() + " Количество свободных столов: " + reservation.getNumbersOfTables())
-                                    .callbackData("Reservation:" + reservation.getId() + ":"
-                                            + reservation.getBeginning() + ":"
-                                            + reservation.getEnding() + ":"
-                                            + reservation.getNumbersOfTables())
-                                    .build()));
-        }
-        execute(
-                SendMessage.builder()
-                        .text("Please choose product category")
-                        .chatId(message.getChatId().toString())
-                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttonsForReservation).build())
-                        .build());
+//        System.out.println(organizationDto.id());
+//        List<Reservation> reservations
+//                = bookingAdapter.getReservations("/reservation?organizationId={organizationId}", organizationDto.id());
+//        System.out.println(reservations);
+////        List<Reservation> reservationDtos = organizationDto.reservationsList();
+//        List<List<InlineKeyboardButton>> buttonsForReservation = new ArrayList<>();
+//        reservations.removeIf(reservation -> reservation.getNumbersOfTables() <= 0);
+//        personDto = new PersonDto(message.getFrom().getId(), message.getFrom().getUserName());
+//        for (Reservation reservation : reservations) {
+//            buttonsForReservation.add(
+//                    Arrays.asList(
+//                            InlineKeyboardButton.builder()
+//                                    .text("Доступное время: " + reservation.getBeginning() + "-"
+//                                            + reservation.getEnding() + " Количество свободных столов: " + reservation.getNumbersOfTables())
+//                                    .callbackData("Reservation:" + reservation.getId() + ":"
+//                                            + reservation.getBeginning() + ":"
+//                                            + reservation.getEnding() + ":"
+//                                            + reservation.getNumbersOfTables())
+//                                    .build()));
+//        }
+//        execute(
+//                SendMessage.builder()
+//                        .text("Please choose product category")
+//                        .chatId(message.getChatId().toString())
+//                        .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttonsForReservation).build())
+//                        .build());
     }
 
 

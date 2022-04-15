@@ -16,10 +16,9 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @Entity
 @Builder
-public class User {
+public class Person {
 
     @Id
     private Long id;
-
     private String name;
 }
