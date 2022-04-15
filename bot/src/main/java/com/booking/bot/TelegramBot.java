@@ -1,7 +1,6 @@
 package com.booking.bot;
 
 import com.booking.bot.adapter.BookingAdapter;
-import com.booking.bot.dto.BookingDto;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.PersonDto;
 import com.booking.bot.service.BookingService;
@@ -16,12 +15,10 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @NoArgsConstructor
@@ -92,6 +89,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
 
         PersonDto personDto = bookingAdapter.searchOfPerson("/person?id={id}", message.getFrom().getId());
+        System.out.println(personDto);
 
         if ((personDto == null || personDto.id().equals(message.getFrom().getId()))
                 && statusChat.isEmpty()) {
@@ -100,7 +98,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             return;
         } else if (personDto != null && personDto.id().equals(message.getFrom().getId())) {
             executeString("Hello, " + personDto.name(), message);
-            return;
         }
         if (message.hasText() && message.hasEntities()) {
             Optional<MessageEntity> commandEntity = message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
@@ -109,32 +106,33 @@ public class TelegramBot extends TelegramLongPollingBot {
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
 
                 switch (command) {
-                    case "/sign_up":
+                    case "/sign_up" -> {
                         statusChat.put(message.getFrom().getId(), "/sign_up");
                         executeString("Type your name, please", message);
                         return;
-                    case "/find":
+                    }
+                    case "/find" -> {
                         statusChat.put(message.getFrom().getId(), "/find");
                         executeString("Введите имя организации", message);
-                        break;
-                    case "/organizations":
+                    }
+                    case "/organizations" -> {
                         statusChat.put(message.getFrom().getId(), "/organizations");
                         executeString("Список организаций: ", message);
-                        break;
-                    case "/create_booking":
+                    }
+                    case "/create_booking" -> {
                         statusChat.put(message.getFrom().getId(), "/create_booking");
                         createButtonsForOrganization(message);
                         return;
-                    case "/create_reserve":
+                    }
+                    case "/create_reserve" -> {
                         statusChat.put(message.getFrom().getId(), "/create_reserve");
                         createButtonsForReservations(message, organizationDto);
                         System.out.println("switch " + organizationDto);
                         return;
-                    default:
-                        executeString("Сервис по бронированию.\n" +
-                                                "/find - поиск бронирования.\n" +
-                                                "/organizations - просмотр доступных организаций.", message);
-                        break;
+                    }
+                    default -> executeString("Сервис по бронированию.\n" +
+                            "/find - поиск бронирования.\n" +
+                            "/organizations - просмотр доступных организаций.", message);
                 }
             }
         }
@@ -147,37 +145,56 @@ public class TelegramBot extends TelegramLongPollingBot {
             case "/sign_up" -> {
                 bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), messageString.get()), "/person");
                 statusChat.put(message.getFrom().getId(), "free");
-                executeString("Sign up is done", message);
+                executeString("Sign up is done. \n" +
+                        "Сервис по бронированию.\n" +
+                        "/find - поиск бронирования.\n" +
+                        "/organizations - просмотр доступных организаций.", message);
+                return;
             }
 
             case "/find" -> {
                 OrganizationDto org = bookingAdapter.getOrganization("/organization?name={name}", messageString.get());
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append("Название: " + org.name() + "\n" +
+                String stringMessage = "Название: " + org.name() + "\n" +
                         "Расписание: " + org.schedule() + "\n" +
                         "Средний чек: " + org.averageCheck() + "\n" +
-                        "Рейтинг: " + org.rating() + "\n");
+                        "Рейтинг: " + org.rating() + "\n";
+                executeString(stringMessage, message);
+                statusChat.put(message.getFrom().getId(), "free");
+                return;
+            }
+
+            case "/organizations" -> {
+                List<OrganizationDto> organizationDto
+                        = bookingAdapter.getOrganizations("organization?pageNo=0&pageSize=2&sortBy=name");
+                System.out.println(organizationDto);
+                StringBuilder stringBuilder = new StringBuilder();
+                for (OrganizationDto o : organizationDto) {
+                    stringBuilder.append(o.name()).append("\n");
+                    System.out.println(o);
+                }
+
                 executeString(stringBuilder.toString(), message);
                 statusChat.put(message.getFrom().getId(), "free");
             }
-        }
-        if (statusChat.get(message.getFrom().getId()).equals("/organizations")) {
-            OrganizationDto[] organizationDto = bookingAdapter.getArrayOrganizations("organization?pageNo=0&pageSize=2&sortBy=name");
-            StringBuilder stringBuilder = new StringBuilder();
-            for (OrganizationDto o : organizationDto) {
-                stringBuilder.append(o.name() + "\n");
+            default -> {
+                executeString("Сервис по бронированию.\n" +
+                        "/hello - поздороваться \n" +
+                        "/find - поиск бронирования.\n" +
+                        "/organizations - просмотр доступных организаций.", message);
             }
-
-            executeString(stringBuilder.toString(), message);
-            statusChat.put(message.getFrom().getId(), "free");
-        } else {
-            executeString("Сервис по бронированию.\n" +
-                    "/hello - поздороваться \n" +
-                    "/find - поиск бронирования.\n" +
-                    "/organizations - просмотр доступных организаций.", message);
         }
-
     }
+//        if (statusChat.get(message.getFrom().getId()).equals("/organizations")) {
+//            OrganizationDto[] organizationDto = bookingAdapter.getArrayOrganizations("organization?pageNo=0&pageSize=2&sortBy=name");
+//            StringBuilder stringBuilder = new StringBuilder();
+//            for (OrganizationDto o : organizationDto) {
+//                stringBuilder.append(o.name()).append("\n");
+//            }
+//
+//            executeString(stringBuilder.toString(), message);
+//            statusChat.put(message.getFrom().getId(), "free");
+//        } else {
+
 
     private void executeString(String executeStr, Message message) throws TelegramApiException {
         execute(
@@ -221,13 +238,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void createButtonsForOrganization(Message message) throws TelegramApiException {
         List<List<InlineKeyboardButton>> buttonsForOrganization = new ArrayList<>();
-        OrganizationDto[] organizationDto = bookingAdapter.getArrayOrganizations("/organization");
-        if (organizationDto.length == 0) {
+        List<OrganizationDto> organizationDto = bookingAdapter.getOrganizations("/organization");
+        if (organizationDto.size() == 0) {
             executeString("Organizations not found", message);
             return;
         }
-        List<OrganizationDto> listOfOrganizations = Arrays.stream(organizationDto).collect(Collectors.toList());
-        for (OrganizationDto organizationDtoTemp : listOfOrganizations) {
+        for (OrganizationDto organizationDtoTemp : organizationDto) {
             buttonsForOrganization.add(
                     Arrays.asList(
                             InlineKeyboardButton.builder()

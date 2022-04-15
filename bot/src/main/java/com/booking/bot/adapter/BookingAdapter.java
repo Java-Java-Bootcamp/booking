@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -78,11 +79,13 @@ public class BookingAdapter {
 //        return Arrays.stream(organizationDtoMono.share().block()).collect(Collectors.toList());
 //    }
 
-    public OrganizationDto[] getArrayOrganizations(String uri) {
-        Mono<OrganizationDto[]> organizationDtoMono = client.get().uri("/organization")
-                .retrieve().bodyToMono(OrganizationDto[].class);
-        OrganizationDto[] organizationDto = organizationDtoMono.share().block();
-        return organizationDto;
+    public List<OrganizationDto> getOrganizations(String uri) {
+        Mono<OrganizationDto[]> organizationDtoMono
+                = client.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(OrganizationDto[].class);
+        return Arrays.stream(Objects.requireNonNull(organizationDtoMono.share().block())).collect(Collectors.toList());
     }
 
 }

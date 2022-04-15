@@ -19,7 +19,6 @@ public class PersonController {
 
     @PostMapping("/person")
     public void addNewBooking(@RequestBody PersonDto personDto) {
-        System.out.println("ok");
         personService.updatePerson(personDto);
     }
 }

@@ -8,6 +8,8 @@ import com.booking.backend.entity.Organization;
 import com.booking.backend.entity.Person;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class MapperImpl implements Mapper {
 
@@ -27,12 +29,15 @@ public class MapperImpl implements Mapper {
     }
 
     @Override
-    public PersonDto convertFromPersonToPersonDto(Person person) {
-        return new PersonDto(person.getId(), person.getName());
+    public PersonDto convertFromPersonToPersonDto(Optional<Person> person) {
+        return person.map(value -> new PersonDto(value.getId(), value.getName())).orElse(null);
     }
 
     @Override
     public OrganizationDto convertFromOrganizationToOrganizationDto(Organization organization) {
+        //for optional
+//        return organization.map(value -> new OrganizationDto(value.getId(), value.getName(),
+//                value.getSchedule(), value.getAverageCheck(), value.getRating())).orElse(null);
         return new OrganizationDto(organization.getId(), organization.getName(),
                 organization.getSchedule(), organization.getAverageCheck(),
                 organization.getRating());

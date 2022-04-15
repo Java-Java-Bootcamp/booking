@@ -5,6 +5,8 @@ import com.booking.backend.mapper.Mapper;
 import com.booking.backend.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
@@ -17,7 +19,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonDto getPersonById(Long id) {
-        return mapper.convertFromPersonToPersonDto(personRepository.getById(id));
+        return mapper.convertFromPersonToPersonDto(personRepository.findById(id));
     }
 
 
