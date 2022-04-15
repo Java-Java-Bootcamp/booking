@@ -1,6 +1,10 @@
 package com.booking.backend.service;
 
-public interface PersonService {
+import org.springframework.stereotype.Service;
+import com.booking.backend.dto.PersonDto;
 
-    void get();
+public interface PersonService {
+    PersonDto getPersonById(Long id);
+
+    void updatePerson(PersonDto personDto);
 }

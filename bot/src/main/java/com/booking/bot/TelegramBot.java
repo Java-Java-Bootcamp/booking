@@ -86,62 +86,70 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
         if (param[0].contains("Org")) {
             organizationDto = bookingAdapter.getOrganization("/organization?name={name}", param[1]);
-            System.out.println("Callback" + param[1]);
         }
     }
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
-        if (personDto.id().equals(message.getFrom().getId())) {
-            execute(
-                    SendMessage.builder()
-                            .text("Hello, " + personDto.name())
-                            .chatId(message.getChatId().toString())
-                            .build()
-            );
+
+        PersonDto personDto = bookingAdapter.searchOfPerson("/person?id={id}", message.getFrom().getId());
+
+        if ((personDto == null || personDto.id().equals(message.getFrom().getId()))
+                && statusChat.isEmpty()) {
+            statusChat.put(message.getFrom().getId(), "/sign_up");
+//            execute(
+//                    SendMessage.builder()
+//                            .text("Sign up, please: /sign_up")
+//                            .chatId(message.getChatId().toString())
+//                            .build()
+//            );
+            executeString("Sign up, please: /sign_up", message);
             return;
-        } else {
-            execute(
-                    SendMessage.builder()
-                            .text("Sign up, please: /sign_up")
-                            .chatId(message.getChatId().toString())
-                            .build()
-            );
+        } else if (personDto != null && personDto.id().equals(message.getFrom().getId())) {
+//            execute(
+//                    SendMessage.builder()
+//                            .text("Hello, " + personDto.name())
+//                            .chatId(message.getChatId().toString())
+//                            .build()
+//            );
+            executeString("Hello, " + personDto.name(), message);
+            return;
         }
         if (message.hasText() && message.hasEntities()) {
-            Optional<MessageEntity> commandEntity =
-                    message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
+            Optional<MessageEntity> commandEntity = message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
             if (commandEntity.isPresent()) {
                 String command =
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
-                PersonDto personDto = bookingAdapter.searchOfPerson("/someUri", message.getFrom().getId());
 
                 switch (command) {
                     case "/sign_up":
                         statusChat.put(message.getFrom().getId(), "/sign_up");
-                        execute(
-                                SendMessage.builder()
-                                        .text("Type your name, please")
-                                        .chatId(message.getChatId().toString())
-                                        .build()
-                        );
+//                        execute(
+//                                SendMessage.builder()
+//                                        .text("Type your name, please")
+//                                        .chatId(message.getChatId().toString())
+//                                        .build()
+//                        );
+                        executeString("Type your name, please", message);
                         return;
                     case "/find":
                         statusChat.put(message.getFrom().getId(), "/find");
-                        execute(
-                                SendMessage.builder()
-                                        .text("Введите имя организации")
-                                        .chatId(message.getChatId().toString())
-                                        .build()
-                        );
+//                        execute(
+//                                SendMessage.builder()
+//                                        .text("Введите имя организации")
+//                                        .chatId(message.getChatId().toString())
+//                                        .build()
+//                        );
+                        executeString("Введите имя организации", message);
                         break;
                     case "/organizations":
                         statusChat.put(message.getFrom().getId(), "/organizations");
-                        execute(
-                                SendMessage.builder()
-                                        .text("Список организаций:")
-                                        .chatId(message.getChatId().toString())
-                                        .build()
-                        );
+//                        execute(
+//                                SendMessage.builder()
+//                                        .text("Список организаций:")
+//                                        .chatId(message.getChatId().toString())
+//                                        .build()
+//                        );
+                        executeString("Список организаций: ", message);
                         break;
                     case "/create_booking":
                         statusChat.put(message.getFrom().getId(), "/create_booking");
@@ -153,14 +161,17 @@ public class TelegramBot extends TelegramLongPollingBot {
                         System.out.println("switch " + organizationDto);
                         return;
                     default:
-                        execute(
-                                SendMessage.builder()
-                                        .text("Сервис по бронированию.\n" +
+//                        execute(
+//                                SendMessage.builder()
+//                                        .text("Сервис по бронированию.\n" +
+//                                                "/find - поиск бронирования.\n" +
+//                                                "/organizations - просмотр доступных организаций.")
+//                                        .chatId(message.getChatId().toString())
+//                                        .build()
+//                        );
+                        executeString("Сервис по бронированию.\n" +
                                                 "/find - поиск бронирования.\n" +
-                                                "/organizations - просмотр доступных организаций.")
-                                        .chatId(message.getChatId().toString())
-                                        .build()
-                        );
+                                                "/organizations - просмотр доступных организаций.", message);
                         break;
                 }
             }
@@ -168,53 +179,104 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String messageText = message.getText();
         Optional<String> messageString = parseString(messageText);
-        if (statusChat.get(message.getFrom().getId()).equals("/sign_up")) {
-            //сохранить юзера
-            bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), messageString.get()), "/someUri");
+        String mapValue = statusChat.get(message.getFrom().getId());
+
+        switch (mapValue) {
+            case "/sign_up" -> {
+                bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), messageString.get()), "/person");
+                statusChat.put(message.getFrom().getId(), "free");
+//                execute(
+//                        SendMessage.builder()
+//                                .text("Sign up is done")
+//                                .chatId(message.getChatId().toString())
+//                                .build()
+//                );
+                executeString("Sign up is done", message);
+            }
+
+            case "/find" -> {
+                OrganizationDto org = bookingAdapter.getOrganization("/organization?name={name}", messageString.get());
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Название: " + org.name() + "\n" +
+                        "Расписание: " + org.schedule() + "\n" +
+                        "Средний чек: " + org.averageCheck() + "\n" +
+                        "Рейтинг: " + org.rating() + "\n");
+//                execute(
+//                        SendMessage.builder()
+//                                .text(stringBuilder.toString())
+//                                .chatId(message.getChatId().toString())
+//                                .build()
+//                );
+                executeString(stringBuilder.toString(), message);
+                statusChat.put(message.getFrom().getId(), "free");
+            }
         }
-        if (statusChat.get(message.getFrom().getId()) != null && statusChat.get(message.getFrom().getId()).equals("/find")) {
-            OrganizationDto org = bookingAdapter.getOrganization("/organization?name={name}", messageString.get());
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("Название: " + org.name() + "\n" +
-                    "Расписание: " + org.schedule() + "\n" +
-                    "Кол-во столов: " + org.numbersOfTables() + "\n" +
-                    "Средний чек: " + org.averageCheck() + "\n" +
-                    "Рейтинг: " + org.rating() + "\n");
-            execute(
-                    SendMessage.builder()
-                            .text(stringBuilder.toString())
-                            .chatId(message.getChatId().toString())
-                            .build()
-            );
-            statusChat.put(message.getFrom().getId(), "free");
-        } else if (statusChat.get(message.getFrom().getId()).equals("/organizations")) {
+//        if (mapValue.equals("/sign_up")) {
+//            bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), messageString.get()), "/person");
+//            statusChat.put(message.getFrom().getId(), "free");
+//            execute(
+//                    SendMessage.builder()
+//                            .text("Sign up is done")
+//                            .chatId(message.getChatId().toString())
+//                            .build()
+//            );
+//        }
+//        else if (statusChat.get(message.getFrom().getId()) != null && statusChat.get(message.getFrom().getId()).equals("/find")) {
+//            OrganizationDto org = bookingAdapter.getOrganization("/organization?name={name}", messageString.get());
+//            StringBuilder stringBuilder = new StringBuilder();
+//            stringBuilder.append("Название: " + org.name() + "\n" +
+//                    "Расписание: " + org.schedule() + "\n" +
+////                    "Кол-во столов: " + org.numbersOfTables() + "\n" +
+//                    "Средний чек: " + org.averageCheck() + "\n" +
+//                    "Рейтинг: " + org.rating() + "\n");
+//            execute(
+//                    SendMessage.builder()
+//                            .text(stringBuilder.toString())
+//                            .chatId(message.getChatId().toString())
+//                            .build()
+//            );
+//            statusChat.put(message.getFrom().getId(), "free");
+//    }
+        if (statusChat.get(message.getFrom().getId()).equals("/organizations")) {
             OrganizationDto[] organizationDto = bookingAdapter.getArrayOrganizations("organization?pageNo=0&pageSize=2&sortBy=name");
-            System.out.println(33);
             StringBuilder stringBuilder = new StringBuilder();
             for (OrganizationDto o : organizationDto) {
                 stringBuilder.append(o.name() + "\n");
             }
-            execute(
-                    SendMessage.builder()
-                            .text(stringBuilder.toString())
-                            .chatId(message.getChatId().toString())
-                            .build()
-            );
+//            execute(
+//                    SendMessage.builder()
+//                            .text(stringBuilder.toString())
+//                            .chatId(message.getChatId().toString())
+//                            .build()
+//            );
+            executeString(stringBuilder.toString(), message);
             statusChat.put(message.getFrom().getId(), "free");
         } else {
-            execute(
-                    SendMessage.builder()
-                            .text("Сервис по бронированию.\n" +
-                                    "/hello - поздороваться \n" +
-                                    "/find - поиск бронирования.\n" +
-                                    "/organizations - просмотр доступных организаций.")
-                            .chatId(message.getChatId().toString())
-                            .build()
-            );
+            executeString("Сервис по бронированию.\n" +
+                    "/hello - поздороваться \n" +
+                    "/find - поиск бронирования.\n" +
+                    "/organizations - просмотр доступных организаций.", message);
+//            execute(
+//                    SendMessage.builder()
+//                            .text("Сервис по бронированию.\n" +
+//                                    "/hello - поздороваться \n" +
+//                                    "/find - поиск бронирования.\n" +
+//                                    "/organizations - просмотр доступных организаций.")
+//                            .chatId(message.getChatId().toString())
+//                            .build()
+//            );
         }
 
     }
 
+    private void executeString(String executeStr, Message message) throws TelegramApiException {
+        execute(
+                SendMessage.builder()
+                        .text(executeStr)
+                        .chatId(message.getChatId().toString())
+                        .build()
+        );
+    }
 
     private void createButtonsForReservations(Message message, OrganizationDto organizationDto) throws TelegramApiException {
 

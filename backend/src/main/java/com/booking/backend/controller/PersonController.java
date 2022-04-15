@@ -1,21 +1,25 @@
 package com.booking.backend.controller;
+import com.booking.backend.dto.OrganizationDto;
 import com.booking.backend.service.PersonService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
+import com.booking.backend.dto.PersonDto;
 @RestController
 public class PersonController {
     private PersonService personService;
 
-    public PersonController(ClientService clientService){
-        this.clientService = clientService;
+    public PersonController(PersonService personService){
+        this.personService = personService;
     }
 
-    @GetMapping("/client")
-    @RequestMapping(value = "/client", params = "id")
-    public Client getClientById(@RequestParam Long id) {
-        return clientService.getClientById(id);
+    @GetMapping("/person")
+    @RequestMapping(value = "/person", params = "id")
+    public PersonDto getPersonById(@RequestParam Long id) {
+        return personService.getPersonById(id);
+    }
+
+    @PostMapping("/person")
+    public void addNewBooking(@RequestBody PersonDto personDto) {
+        System.out.println("ok");
+        personService.updatePerson(personDto);
     }
 }

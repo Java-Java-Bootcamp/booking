@@ -68,9 +68,9 @@ public class BookingAdapter {
     }
 
     public PersonDto searchOfPerson(String uri, Long userId) {
-        Mono<PersonDto[]> userDto
-                = client.get().uri(uri, userId).retrieve().bodyToMono(PersonDto[].class);
-        return Arrays.stream(userDto.share().block()).findFirst().get();
+        Mono<PersonDto> personDto
+                = client.get().uri(uri, userId).retrieve().bodyToMono(PersonDto.class);
+        return personDto.share().block();
     }
 
 //    public List<Reservation> getReservations(String uri, Long organizationName) {
