@@ -1,7 +1,6 @@
 package com.booking.backend.controller;
 
 
-import com.booking.backend.dto.BookingDto;
 import com.booking.backend.dto.OrganizationDto;
 import com.booking.backend.service.OrganizationService;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +10,7 @@ import java.util.List;
 @RestController
 public class OrganizationController {
 
-    private OrganizationService organizationService;
+    private final OrganizationService organizationService;
 
     public OrganizationController(OrganizationService organizationService) {
         this.organizationService = organizationService;
@@ -24,10 +23,10 @@ public class OrganizationController {
                                         @RequestParam String sortBy) {
         return organizationService.getSortedOrganization(pageNo, pageSize, sortBy);
     }
+
     @GetMapping("/organization")
     @RequestMapping(value = "/organization", params = "name")
     public List<OrganizationDto> getAll(@RequestParam String name) {
-        System.out.println(organizationService.findAllByName(name));
         return organizationService.findAllByName(name);
     }
 
@@ -39,7 +38,6 @@ public class OrganizationController {
 
     @PostMapping("/organization")
     public void addNewBooking(@RequestBody OrganizationDto organizationDto) {
-        System.out.println("ok");
         organizationService.updateOrganization(organizationDto);
     }
 }

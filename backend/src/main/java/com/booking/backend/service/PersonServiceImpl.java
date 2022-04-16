@@ -1,25 +1,23 @@
 package com.booking.backend.service;
 
 import com.booking.backend.dto.PersonDto;
-import com.booking.backend.mapper.Mapper;
+import com.booking.backend.mapper.PersonMapper;
 import com.booking.backend.repository.PersonRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
-    private final Mapper mapper;
+    private final PersonMapper mapper;
 
-    public PersonServiceImpl(PersonRepository personRepository, Mapper mapper) {
+    public PersonServiceImpl(PersonRepository personRepository, PersonMapper mapper) {
         this.personRepository = personRepository;
         this.mapper = mapper;
     }
 
     @Override
     public PersonDto getPersonById(Long id) {
-        return mapper.convertFromPersonToPersonDto(personRepository.findById(id));
+        return mapper.convertFromPersonToPersonDtoInController(personRepository.findById(id));
     }
 
 

@@ -1,63 +1,94 @@
 package com.booking.bot.service;
 
-import com.booking.bot.dto.BookingDto;
+import com.booking.bot.adapter.BookingAdapter;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.PersonDto;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.springframework.stereotype.Service;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
+@NoArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-//    @Override
-//    public Reservation createReservationDtoForBooking(Long id, Integer beginning, Integer ending, Integer numbersOfTable) {
-//        return new Reservation(id, beginning, ending, numbersOfTable);
-//    }
+    private BookingAdapter bookingAdapter;
 
-    @Override
-    public void createButtonsForReservations(Message message, OrganizationDto organizationDto) {
-//
-//        List<Reservation> reservationDtos = organizationDto.reservationsList();
-//        List<List<InlineKeyboardButton>> buttonsForReservation = new ArrayList<>();
-//        reservationDtos.removeIf(reservation -> reservation.getNumbersOfTables() <= 0);
-//        for (Reservation reservation : reservationDtos) {
-//            buttonsForReservation.add(
-//                    Arrays.asList(
-//                            InlineKeyboardButton.builder()
-//                                    .text("Доступное время: " + reservation.getBeginning() + "-"
-//                                            + reservation.getEnding() + " Количество свободных столов: " + reservation.getNumbersOfTables())
-//                                    .callbackData("Reservation:" + reservation.getId() + ":"
-//                                            + reservation.getBeginning() + ":"
-//                                            + reservation.getEnding() + ":"
-//                                            + reservation.getNumbersOfTables())
-//                                    .build()));
-//        }
+    @Autowired
+    public BookingServiceImpl(BookingAdapter bookingAdapter) {
+        this.bookingAdapter = bookingAdapter;
     }
 
     @Override
-    public OrganizationDto setChangedReservationToOrganization(OrganizationDto organizationDto, String reservationId) {
-//        List<Reservation> reservation = organizationDto.reservationsList();
-//        Reservation reservation1 = reservation.stream().filter(e -> e.getId() == Long.valueOf(reservationId)).findFirst().get();
-//        reservation1.setNumbersOfTables(reservation1.getNumbersOfTables() - 1);
-//        Integer index = organizationDto.reservationsList().indexOf(reservation1);
-//        organizationDto.reservationsList().set(index, reservation1);
-        return organizationDto;
+    public String chooseCommand(String commandName, Map<Long, String> statusChat, Message message) {
 
+        statusChat.put(message.getFrom().getId(), commandName);
+        switch (commandName) {
+            case "/start" -> {
+                bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), message.getFrom().getUserName()), "/person");
+                return "Hi " + message.getFrom().getUserName() + "! Сервис по бронированию.\n" +
+                        "/find - поиск бронирования.\n" +
+                        "/organization - просмотр доступных организаций.";
+            }
+            case "/sign_up" -> {
+                return "Type your name, please: ";
+            }
+            case "/find" -> {
+                return "Type name of organization: ";
+            }
+            case "/organization" -> {
+                return "Отфильтровать по: rate, bill ";
+            }
+            default -> {
+                return "Command not found";
+            }
+        }
     }
 
-//    @Override
-//    public BookingDto createBookingForSending(PersonDto personDto, OrganizationDto organizationDto
-////            , Reservation reservation
-//    ) {
-////        return new BookingDto(reservation, personDto, organizationDto);
-//        return null;
-//    }
+    @Override
+    public Optional<String> parseString(String messageText) {
+        try {
+            return Optional.of(String.valueOf(messageText));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 
+    @Override
+    public String getValueFromChat(String mapValue, String messageString,
+                                   Message message, Map<Long, String> statusChat) {
+        switch (mapValue) {
+            case "/find" -> {
+                List<OrganizationDto> organizations
+                        = bookingAdapter.getOrganization("/organization?name={name}", messageString);
+                return getConclusion(message, statusChat, organizations);
+            }
 
+            case "/organization" -> {
+                List<OrganizationDto> organizations
+                        = bookingAdapter.getOrganizations("/organization?pageNo=0&pageSize=10&sortBy={rate}", messageString);
+                return getConclusion(message, statusChat, organizations);
+            }
+            default -> {
+                return "Organization not found! Try one more time: /find";
+            }
+        }
+    }
+
+    private String getConclusion(Message message, Map<Long, String> statusChat, List<OrganizationDto> organizations) {
+        if (organizations.isEmpty()) {
+            return "Organization not found! Try one more time: /find";
+        }
+        StringBuilder stringMessage = new StringBuilder();
+        statusChat.put(message.getFrom().getId(), "free");
+        for (OrganizationDto org : organizations) {
+            stringMessage.append("Название: ").append(org.name()).append("\n").append("Расписание: ")
+                    .append(org.schedule()).append("\n").append("Средний чек: ")
+                    .append(org.averageCheck()).append("\n").append("Рейтинг: ")
+                    .append(org.rating()).append("\n").append("\n");
+        }
+        return stringMessage.toString();
+    }
 }

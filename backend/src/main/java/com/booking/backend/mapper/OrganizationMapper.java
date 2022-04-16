@@ -9,15 +9,7 @@ import com.booking.backend.entity.Person;
 
 import java.util.Optional;
 
-public interface Mapper {
-
-    BookingDto convertFromBookingToBookingDto(Booking booking);
-
-    Booking convertFromBookingDtoToBooking(BookingDto bookingDto);
-
-    Person convertFromPersonDtoToPerson(PersonDto personDto);
-
-    PersonDto convertFromPersonToPersonDto(Optional<Person> person);
+public interface OrganizationMapper {
 
     OrganizationDto convertFromOrganizationToOrganizationDto(Organization organization);
 

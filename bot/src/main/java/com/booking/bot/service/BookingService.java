@@ -1,19 +1,20 @@
 package com.booking.bot.service;
 
-import com.booking.bot.dto.BookingDto;
-import com.booking.bot.dto.OrganizationDto;
-import com.booking.bot.dto.PersonDto;
-//import com.booking.bot.entity.Reservation;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.Map;
+import java.util.Optional;
 
 public interface BookingService {
 
-//    Reservation createReservationDtoForBooking(Long id, Integer beginning, Integer ending, Integer numbersOfTable);
+    String chooseCommand(String commandName, Map<Long, String> mapState, Message message) throws TelegramApiException;
 
-    void createButtonsForReservations(Message message, OrganizationDto organizationDto);
+    String getValueFromChat(String mapValue, String messageString, Message message, Map<Long, String> statusChat);
 
-    OrganizationDto setChangedReservationToOrganization(OrganizationDto organizationDto, String reservationId);
+//    String checkingTheExistenceOfPerson(Message message);
 
-//    public BookingDto createBookingForSending(PersonDto personDto, OrganizationDto organizationDto, Reservation reservation);
+    Optional<String> parseString(String messageText);
+
 
 }
