@@ -1,6 +1,5 @@
 package com.booking.bot;
 
-import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.service.BookingService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.NoArgsConstructor;
@@ -77,7 +76,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
 
-        if (message.hasText() && message.hasEntities()) {
+        if (message.isCommand()) {
             Optional<MessageEntity> commandEntity = message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
             if (commandEntity.isPresent()) {
                 String command =
@@ -94,12 +93,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                         .build();
                 buttons.add(inlineKeyboardButton);
                 buttons.add(inlineKeyboardButton1);
-                SendMessage sendMessage = SendMessage.builder()
-                        .text("Please choose product category")
-                        .chatId(message.getChatId().toString())
-                        .replyMarkup(InlineKeyboardMarkup.builder().keyboardRow(buttons).build())
-                        .build();
-                execute(sendMessage);
+//                SendMessage sendMessage = SendMessage.builder()
+//                        .text("Please choose product category")
+//                        .chatId(message.getChatId().toString())
+//                        .replyMarkup(InlineKeyboardMarkup.builder().keyboardRow(buttons).build())
+//                        .build();
+//                execute(sendMessage);
                 executeString(s, message);
             }
             return;

@@ -11,13 +11,13 @@ public class OrganizationMapperImpl implements OrganizationMapper {
     public OrganizationDto convertFromOrganizationToOrganizationDto(Organization organization) {
         return new OrganizationDto(organization.getId(), organization.getName(),
                 organization.getSchedule(), organization.getAverageCheck(),
-                organization.getRating());
+                organization.getRating(),organization.getTypeOrganization());
     }
 
     @Override
     public Organization convertFromOrganizationDtoToOrganization(OrganizationDto organizationDto) {
         return new Organization(organizationDto.id(), organizationDto.name(),
                 organizationDto.schedule(), organizationDto.averageCheck(),
-                organizationDto.rating());
+                organizationDto.rating(),organizationDto.typeOrganization());
     }
 }

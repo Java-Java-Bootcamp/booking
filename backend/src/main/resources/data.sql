@@ -1,7 +1,7 @@
-INSERT INTO "organization" ("id", "average_check", "name", "rating", "schedule")
-VALUES (1, 3000.5, 'Restaurant', 8.7, '10:00-22:00'),
+INSERT INTO "organization" ("id", "average_check", "name", "rating", "schedule","type_organization")
+VALUES (1, 3000.5, 'Restaurant', 8.7, '10:00-22:00','RESTAURANT'),
 
-       (2, 2000.5, 'Bar', 8, '12:00-23:00');
+       (2, 2000.5, 'Bar', 8, '12:00-23:00','BAR');
 
 INSERT INTO "some_object" (id, description, organization_id)
 VALUES (1, 'Столик у окна на 8 мест', 1),

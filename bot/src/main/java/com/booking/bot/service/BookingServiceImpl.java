@@ -5,11 +5,8 @@ import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.PersonDto;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.*;
 
@@ -26,17 +23,13 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public String chooseCommand(String commandName, Map<Long, String> statusChat, Message message) {
-
         statusChat.put(message.getFrom().getId(), commandName);
         switch (commandName) {
             case "/start" -> {
                 bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), message.getFrom().getUserName()), "/person");
-                return "Hi " + message.getFrom().getUserName() + "! Сервис по бронированию.\n" +
+                return "Hi, " + message.getFrom().getUserName() + "! Сервис по бронированию.\n" +
                         "/find - поиск бронирования.\n" +
                         "/organization - просмотр доступных организаций.";
-            }
-            case "/sign_up" -> {
-                return "Type your name, please: ";
             }
             case "/find" -> {
                 return "Type name of organization: ";
@@ -69,12 +62,11 @@ public class BookingServiceImpl implements BookingService {
                 System.out.println(organizations);
                 return getConclusion(message, statusChat, organizations);
             }
-
             case "/organization" -> {
                 List<OrganizationDto> organizations
                         = bookingAdapter.getOrganizations("/organization?pageNo=0&pageSize=10&sortBy={rate}", messageString);
-                    return getConclusion(message, statusChat, organizations);
-                }
+                return getConclusion(message, statusChat, organizations);
+            }
             default -> {
                 System.out.println(mapValue);
                 System.out.println(messageString);

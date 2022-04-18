@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +26,6 @@ public class Organization {
     private Double averageCheck;
 
     private Double rating;
-
+    @Enumerated(EnumType.STRING)
+    private TypeOrganization typeOrganization;
 }

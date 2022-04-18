@@ -1,11 +1,11 @@
 package com.booking.backend.dto;
 
-import java.util.List;
+import com.booking.backend.entity.TypeOrganization;
 
 public record OrganizationDto(Long id,
                               String name,
                               String schedule,
                               Double averageCheck,
-                              Double rating) {
-
+                              Double rating,
+                              TypeOrganization typeOrganization) {
 }
