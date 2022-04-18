@@ -1,7 +1,6 @@
 package com.booking.backend.controller;
 
 import com.booking.backend.dto.BookingDto;
-import com.booking.backend.entity.Booking;
 import com.booking.backend.service.BookingService;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,17 +9,11 @@ import java.util.List;
 @RestController
 public class BookingController {
 
-    private BookingService bookingService;
+    private final BookingService bookingService;
 
     public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
     }
-
-//    @GetMapping("/booking")
-//    @RequestMapping(value = "/booking", params = "nameOfOrganization")
-//    public List<Booking> getAllBookings(@RequestParam String nameOfOrganization) {
-//        return bookingService.findAllByBookedFalseAndOrganizationName(nameOfOrganization);
-//    }
 
     @GetMapping("/booking")
     @RequestMapping(value = "/booking", params = {"pageNo","pageSize","sortBy"})
