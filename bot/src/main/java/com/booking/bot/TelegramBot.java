@@ -1,5 +1,6 @@
 package com.booking.bot;
 
+import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.service.BookingService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,8 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.*;
@@ -55,13 +58,21 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         }
         if (update.hasCallbackQuery()) {
-            handleCallback(update.getCallbackQuery());
+            try {
+                handleCallback(update.getCallbackQuery());
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void handleCallback(CallbackQuery callbackQuery) {
+    private void handleCallback(CallbackQuery callbackQuery) throws TelegramApiException {
         //place for buttons. Not ready
-//        String[] param = callbackQuery.getData().split(":");
+        String param = callbackQuery.getData();
+        System.out.println(param);
+        executeString(bookingService
+                .getValueFromChat(statusChat.get(callbackQuery.getMessage().getFrom().getId()),
+                        param, callbackQuery.getMessage(), statusChat), callbackQuery.getMessage());
     }
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
@@ -72,6 +83,23 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String command =
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
                 String s = bookingService.chooseCommand(command, statusChat, message);
+                List<InlineKeyboardButton> buttons = new ArrayList<>();
+                InlineKeyboardButton inlineKeyboardButton = InlineKeyboardButton.builder()
+                        .text("rate")
+                        .callbackData("rate")
+                        .build();
+                InlineKeyboardButton inlineKeyboardButton1 = InlineKeyboardButton.builder()
+                        .text("bill")
+                        .callbackData("bill")
+                        .build();
+                buttons.add(inlineKeyboardButton);
+                buttons.add(inlineKeyboardButton1);
+                SendMessage sendMessage = SendMessage.builder()
+                        .text("Please choose product category")
+                        .chatId(message.getChatId().toString())
+                        .replyMarkup(InlineKeyboardMarkup.builder().keyboardRow(buttons).build())
+                        .build();
+                execute(sendMessage);
                 executeString(s, message);
             }
             return;

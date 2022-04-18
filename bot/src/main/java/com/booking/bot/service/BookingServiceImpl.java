@@ -5,8 +5,11 @@ import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.PersonDto;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.*;
 
@@ -63,15 +66,19 @@ public class BookingServiceImpl implements BookingService {
             case "/find" -> {
                 List<OrganizationDto> organizations
                         = bookingAdapter.getOrganization("/organization?name={name}", messageString);
+                System.out.println(organizations);
                 return getConclusion(message, statusChat, organizations);
             }
 
             case "/organization" -> {
                 List<OrganizationDto> organizations
                         = bookingAdapter.getOrganizations("/organization?pageNo=0&pageSize=10&sortBy={rate}", messageString);
-                return getConclusion(message, statusChat, organizations);
-            }
+                    return getConclusion(message, statusChat, organizations);
+                }
             default -> {
+                System.out.println(mapValue);
+                System.out.println(messageString);
+                System.out.println("def");
                 return "Organization not found! Try one more time: /find";
             }
         }
@@ -79,6 +86,7 @@ public class BookingServiceImpl implements BookingService {
 
     private String getConclusion(Message message, Map<Long, String> statusChat, List<OrganizationDto> organizations) {
         if (organizations.isEmpty()) {
+            System.out.println("empty");
             return "Organization not found! Try one more time: /find";
         }
         StringBuilder stringMessage = new StringBuilder();
