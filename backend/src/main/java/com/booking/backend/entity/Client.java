@@ -1,5 +1,6 @@
 package com.booking.backend.entity;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,14 +13,11 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Builder
-public class Booking {
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Person person;
-
-
+    private String name;
 }

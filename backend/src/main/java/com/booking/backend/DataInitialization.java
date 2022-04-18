@@ -13,6 +13,7 @@ public class DataInitialization implements CommandLineRunner {
 
     private BookingRepository bookingRepository;
     private OrganizationRepository organizationRepository;
+
     private PersonRepository personRepository;
 
     @Autowired
@@ -26,7 +27,6 @@ public class DataInitialization implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-
 
         Organization organization = Organization.builder()
                 .name("Restaurant")
@@ -43,6 +43,7 @@ public class DataInitialization implements CommandLineRunner {
                 .rating(8.0)
                 .build();
         organizationRepository.save(organization1);
+
 
         Organization organization2 = Organization.builder()
                 .name("Restaurant")
