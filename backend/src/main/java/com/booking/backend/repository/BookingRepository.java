@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> getAllByBookedTrueAndOrganizationName(String name);
+//    List<Booking> getAllByBookedTrueAndOrganizationName(String name);
 
 //    List<Booking> getAllByOrganizationNameAndOrganizationRating(String name);
 //    List<Booking> findTop20B(String name);

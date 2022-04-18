@@ -2,6 +2,7 @@ package com.booking.backend.service;
 
 import com.booking.backend.dto.OrganizationDto;
 import com.booking.backend.entity.Organization;
+import com.booking.backend.mapper.OrganizationMapper;
 import com.booking.backend.repository.OrganizationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,74 +18,57 @@ import java.util.stream.Collectors;
 public class OrganizationServiceImpl implements OrganizationService {
 
     private OrganizationRepository organizationRepository;
+    private OrganizationMapper organizationMapper;
 
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository) {
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper) {
         this.organizationRepository = organizationRepository;
+        this.organizationMapper = organizationMapper;
     }
 
     @Override
     public List<OrganizationDto> getSortedOrganization(Integer pageNo, Integer pageSize, String sortBy) {
+
         if (sortBy.equals("rate")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("rating"));
-            Page<Organization> pagedResult = organizationRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new OrganizationDto(e.getId(),
-                                e.getName(),
-                                e.getSchedule(),
-                                e.getNumbersOfTables(),
-                                e.getAverageCheck(),
-                                e.getRating()))
-                        .collect(Collectors.toList());
-            } else {
-                return new ArrayList<>();
-            }
+            return changeOrganizationToOrganizationDtoWithPaging(pageNo, pageSize, "rating");
         }
         if (sortBy.equals("bill")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("averageCheck"));
-            Page<Organization> pagedResult = organizationRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new OrganizationDto(e.getId(),
-                                e.getName(),
-                                e.getSchedule(),
-                                e.getNumbersOfTables(),
-                                e.getAverageCheck(),
-                                e.getRating()))
-                        .collect(Collectors.toList());
-            } else {
-                return new ArrayList<>();
-            }
+            return changeOrganizationToOrganizationDtoWithPaging(pageNo, pageSize, "averageCheck");
         }
         if (sortBy.equals("name")) {
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("name"));
-            Page<Organization> pagedResult = organizationRepository.findAll(paging);
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent().stream()
-                        .map(e -> new OrganizationDto(e.getId(),
-                                e.getName(),
-                                e.getSchedule(),
-                                e.getNumbersOfTables(),
-                                e.getAverageCheck(),
-                                e.getRating()))
-                        .collect(Collectors.toList());
-            } else {
-                return new ArrayList<>();
-            }
+            return changeOrganizationToOrganizationDtoWithPaging(pageNo, pageSize, "name");
         }
         return null;
+    }
+
+    private List<OrganizationDto> changeOrganizationToOrganizationDtoWithPaging(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Page<Organization> pagedResult = organizationRepository.findAll(paging);
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent().stream()
+                    .map(organizationMapper::convertFromOrganizationToOrganizationDto)
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     @Override
     public List<OrganizationDto> findAllByName(String name) {
         return organizationRepository.getAllByName(name).stream()
-                .map(e -> new OrganizationDto(e.getId(),
-                        e.getName(),
-                        e.getSchedule(),
-                        e.getNumbersOfTables(),
-                        e.getAverageCheck(),
-                        e.getRating()))
+                .map(organizationMapper::convertFromOrganizationToOrganizationDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrganizationDto> getAll() {
+        return organizationRepository.findAll().stream()
+                .map(organizationMapper::convertFromOrganizationToOrganizationDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateOrganization(OrganizationDto organizationDto) {
+        organizationRepository.save(organizationMapper.convertFromOrganizationDtoToOrganization(organizationDto));
     }
 }
 

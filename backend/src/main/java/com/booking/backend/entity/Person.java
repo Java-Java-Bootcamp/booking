@@ -16,11 +16,9 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @Entity
 @Builder
-public class Cuisine {
+public class Person {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
 }

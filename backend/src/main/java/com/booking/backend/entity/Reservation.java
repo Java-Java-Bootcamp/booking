@@ -14,13 +14,19 @@ import javax.persistence.*;
 @Builder
 public class Reservation {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Integer beginning;
     private Integer ending;
-    //если это значение равняется нулю, то значит все столики на это время заняты и в кнопках отображаться этот слот не будет
-    private Integer numbersOfTables;
+    private String date;
+
+    @ManyToOne
+    private SomeObject someObject;
+
+    @ManyToOne
+    private Booking booking;
 
 }
