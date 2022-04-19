@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,8 +68,15 @@ public class BookingServiceImpl implements BookingService {
         return null;
     }
 
+
+
     @Override
     public void addNewBooking(BookingDto bookingDto) {
         bookingRepository.save(bookingMapper.convertFromBookingDtoToBooking(bookingDto));
+    }
+
+    @Override
+    public Optional<Booking> findById(Long id) {
+        return bookingRepository.findById(id);
     }
 }
