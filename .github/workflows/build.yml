@@ -23,7 +23,7 @@ jobs:
           distribution: 'temurin'
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
       - name: Maven Package
-        run: mvn -f backend/pom.xml clean package
+        run: mvn -f backend/pom.xml clean package -Dmaven.test.skip=true
 
       - name: Maven Package
-        run: mvn -f backend/pom.xml clean package
+        run: mvn -f backend/pom.xml clean package -Dmaven.test.skip=true
