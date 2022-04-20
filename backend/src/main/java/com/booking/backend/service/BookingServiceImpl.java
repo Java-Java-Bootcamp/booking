@@ -74,9 +74,4 @@ public class BookingServiceImpl implements BookingService {
     public void addNewBooking(BookingDto bookingDto) {
         bookingRepository.save(bookingMapper.convertFromBookingDtoToBooking(bookingDto));
     }
-
-    @Override
-    public Optional<Booking> findById(Long id) {
-        return bookingRepository.findById(id);
-    }
 }

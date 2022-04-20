@@ -8,12 +8,9 @@ import java.util.Optional;
 
 public interface BookingService {
 
-//    List<Booking> findAllByBookedFalseAndOrganizationName(String nameOfOrganization);
 
     List<BookingDto> getAllBookings(Integer pageNo, Integer pageSize, String sortBy);
 
     void addNewBooking(BookingDto bookingDto);
-
-    Optional<Booking> findById(Long id);
 
 }
