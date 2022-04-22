@@ -15,7 +15,7 @@ class PersonMapperImplTest {
 
     @Test
     void convertFromPersonDtoToPerson() {
-        assertEquals(personEx, personMapper.convertFromPersonDtoToPerson(personDtoEx));
+        assertEquals(personEx, personMapper.convert(personDtoEx));
     }
 
     @Test
@@ -31,6 +31,6 @@ class PersonMapperImplTest {
 
     @Test
     void convertFromPersonToPersonDto() {
-        assertEquals(personDtoEx, personMapper.convertFromPersonToPersonDto(personEx));
+        assertEquals(personDtoEx, personMapper.convert(personEx));
     }
 }

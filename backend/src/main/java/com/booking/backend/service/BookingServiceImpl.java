@@ -21,51 +21,10 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@NoArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
     private BookingRepository bookingRepository;
     private BookingMapper bookingMapper;
-
-    @Override
-    public List<BookingDto> getAllBookings(Integer pageNo, Integer pageSize, String sortBy) {
-//        if (sortBy.equals("rate")) {
-//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.rating"));
-//            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-//            if (pagedResult.hasContent()) {
-//                return pagedResult.getContent().stream()
-//                        .map(bookingMapper::convertFromBookingToBookingDto)
-//                        .collect(Collectors.toList());
-//            } else {
-//                return new ArrayList<>();
-//            }
-//        }
-//        if (sortBy.equals("bill")) {
-//            //сортировку надо переделывать потому что букинг теперь не содержит организацию
-//            // можно подтягивать сюда просто организацию, тогда сортировка будет осуществляться вообще по организациям
-//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("organization.averageCheck"));
-//            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-//            if (pagedResult.hasContent()) {
-//                return pagedResult.getContent().stream()
-//                        .map(bookingMapper::convertFromBookingToBookingDto)
-//                        .collect(Collectors.toList());
-//            } else {
-//                return new ArrayList<>();
-//            }
-//        }
-//        if (sortBy.equals("time")) {
-//            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("dateOfBeginning"));
-//            Page<Booking> pagedResult = bookingRepository.findAll(paging);
-//            if (pagedResult.hasContent()) {
-//                return pagedResult.getContent().stream()
-//                        .map(bookingMapper::convertFromBookingToBookingDto)
-//                        .collect(Collectors.toList());
-//            } else {
-//                return new ArrayList<>();
-//            }
-//        }
-        return null;
-    }
 
     @Override
     public void addNewBooking(BookingDto bookingDto) {

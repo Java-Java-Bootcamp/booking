@@ -7,11 +7,11 @@ import java.util.Optional;
 
 public interface PersonMapper {
 
-    Person convertFromPersonDtoToPerson(PersonDto personDto);
+    Person convert(PersonDto personDto);
 
     PersonDto convertFromPersonToPersonDtoInController(Optional<Person> person);
 
-    PersonDto convertFromPersonToPersonDto(Person person);
+    PersonDto convert(Person person);
 
     Person convertFromPersonDtoToPersonInController(Optional<PersonDto> personDto);
 

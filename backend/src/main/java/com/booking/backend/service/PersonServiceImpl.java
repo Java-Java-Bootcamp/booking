@@ -23,6 +23,6 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void updatePerson(PersonDto personDto) {
-        personRepository.save(mapper.convertFromPersonDtoToPerson(personDto));
+        personRepository.save(mapper.convert(personDto));
     }
 }

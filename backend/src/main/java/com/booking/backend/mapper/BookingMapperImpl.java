@@ -15,11 +15,11 @@ public class BookingMapperImpl implements BookingMapper {
 
     @Override
     public BookingDto convertFromBookingToBookingDto(Booking booking) {
-        return new BookingDto(booking.getId(), personMapper.convertFromPersonToPersonDto(booking.getPerson()));
+        return new BookingDto(booking.getId(), personMapper.convert(booking.getPerson()));
     }
 
     @Override
     public Booking convertFromBookingDtoToBooking(BookingDto bookingDto) {
-        return new Booking(bookingDto.id(), personMapper.convertFromPersonDtoToPerson(bookingDto.person()));
+        return new Booking(bookingDto.id(), personMapper.convert(bookingDto.person()));
     }
 }
