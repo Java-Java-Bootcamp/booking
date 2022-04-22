@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface BookingService {
-    String chooseCommand(String commandName, Map<Long, String> mapState, Message message) throws TelegramApiException;
+    void chooseAction(String command,Message message) throws TelegramApiException;
 
     String getValueFromChat(String mapValue, String messageString, Message message, Map<Long, String> statusChat);
 

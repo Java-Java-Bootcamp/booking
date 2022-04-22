@@ -2,6 +2,7 @@ package com.booking.backend.mapper;
 
 import com.booking.backend.dto.OrganizationDto;
 import com.booking.backend.entity.Organization;
+import com.booking.backend.entity.TypeOrganization;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,13 +12,13 @@ public class OrganizationMapperImpl implements OrganizationMapper {
     public OrganizationDto convertFromOrganizationToOrganizationDto(Organization organization) {
         return new OrganizationDto(organization.getId(), organization.getName(),
                 organization.getSchedule(), organization.getAverageCheck(),
-                organization.getRating(),organization.getTypeOrganization());
+                organization.getRating(),organization.getTypeOrganization().toString());
     }
 
     @Override
     public Organization convertFromOrganizationDtoToOrganization(OrganizationDto organizationDto) {
         return new Organization(organizationDto.id(), organizationDto.name(),
                 organizationDto.schedule(), organizationDto.averageCheck(),
-                organizationDto.rating(),organizationDto.typeOrganization());
+                organizationDto.rating(), TypeOrganization.valueOf(organizationDto.typeOrganization()));
     }
 }

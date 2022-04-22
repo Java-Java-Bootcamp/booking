@@ -14,11 +14,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class BookingAdapter {
+public class BotAdapter {
 
     private final WebClient client;
 
-    public BookingAdapter() {
+    public BotAdapter() {
         this.client = WebClient.create("http://localhost:8080");
     }
 
@@ -48,5 +48,12 @@ public class BookingAdapter {
                 .bodyToMono(OrganizationDto[].class);
         return Arrays.stream(Objects.requireNonNull(organizationDtoMono.share().block())).collect(Collectors.toList());
     }
-
+    public List<OrganizationDto> getOrganizations(String uri) {
+        Mono<OrganizationDto[]> organizationDtoMono
+                = client.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(OrganizationDto[].class);
+        return Arrays.stream(Objects.requireNonNull(organizationDtoMono.share().block())).collect(Collectors.toList());
+    }
 }

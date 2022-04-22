@@ -1,8 +1,8 @@
 package com.booking.bot;
 
 import com.booking.bot.service.BookingService;
+import com.booking.bot.service.ChatService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -12,14 +12,11 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.*;
 
 @Component
-@NoArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
     @Value("${bot.username}")
@@ -27,15 +24,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Value("${bot.token}")
     private String token;
-
-    private final Map<Long, String> statusChat = new HashMap<>();
-
-    private BookingService bookingService;
-
-    @Autowired
-    public TelegramBot(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
 
     @Override
     public String getBotUsername() {
@@ -45,6 +33,18 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return token;
+    }
+
+    @Autowired
+    private final BookingService bookingService;
+    @Autowired
+    private final ChatService chatService;
+
+    private final Map<Long, Integer> lastMessageIdMap = new HashMap<>();
+
+    public TelegramBot(BookingService bookingService, ChatService chatService) {
+        this.bookingService = bookingService;
+        this.chatService = chatService;
     }
 
     @Override
@@ -66,50 +66,39 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void handleCallback(CallbackQuery callbackQuery) throws TelegramApiException {
-        //place for buttons. Not ready
-        String param = callbackQuery.getData();
-        System.out.println(param);
-        executeString(bookingService
-                .getValueFromChat(statusChat.get(callbackQuery.getMessage().getFrom().getId()),
-                        param, callbackQuery.getMessage(), statusChat), callbackQuery.getMessage());
+        if (!callbackQuery.getData().isEmpty()) {
+            execute(
+                    chatService.commandSwitch(
+                            callbackQuery.getMessage().getFrom().getId(),
+                            callbackQuery.getData(),
+                            callbackQuery.getMessage(),
+                            lastMessageIdMap.get(callbackQuery.getMessage().getChatId())
+                    )
+            );
+
+        } else {
+            System.out.println("callbackQuery is empty");
+        }
+        System.out.println(callbackQuery.getData());
     }
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
-
         if (message.isCommand()) {
             Optional<MessageEntity> commandEntity = message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
             if (commandEntity.isPresent()) {
                 String command =
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
-                String s = bookingService.chooseCommand(command, statusChat, message);
-                List<InlineKeyboardButton> buttons = new ArrayList<>();
-                InlineKeyboardButton inlineKeyboardButton = InlineKeyboardButton.builder()
-                        .text("rate")
-                        .callbackData("rate")
-                        .build();
-                InlineKeyboardButton inlineKeyboardButton1 = InlineKeyboardButton.builder()
-                        .text("bill")
-                        .callbackData("bill")
-                        .build();
-                buttons.add(inlineKeyboardButton);
-                buttons.add(inlineKeyboardButton1);
-//                SendMessage sendMessage = SendMessage.builder()
-//                        .text("Please choose product category")
-//                        .chatId(message.getChatId().toString())
-//                        .replyMarkup(InlineKeyboardMarkup.builder().keyboardRow(buttons).build())
-//                        .build();
-//                execute(sendMessage);
-                executeString(s, message);
+                lastMessageIdMap.put(message.getChatId(), execute(chatService.commandSwitch(message.getFrom().getId(), command, message)).getMessageId());
             }
             return;
         }
 
         if (message.hasText()) {
             Optional<String> messageString = bookingService.parseString(message.getText());
-            String mapValue = statusChat.get(message.getFrom().getId());
-            if (messageString.isPresent()) {
-                executeString(bookingService.getValueFromChat(mapValue, messageString.get(), message, statusChat), message);
-            }
+//            String mapValue = chatService.get(message.getFrom().getId());
+//            if (messageString.isPresent()) {
+//                executeString(bookingService.getValueFromChat(mapValue, messageString.get(), message, chatService), message);
+//            }
         }
     }
 

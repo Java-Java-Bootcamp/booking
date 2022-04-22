@@ -1,8 +1,7 @@
 package com.booking.bot.service;
 
-import com.booking.bot.adapter.BookingAdapter;
+import com.booking.bot.adapter.BotAdapter;
 import com.booking.bot.dto.OrganizationDto;
-import com.booking.bot.dto.PersonDto;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -14,33 +13,15 @@ import java.util.*;
 @NoArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    private BookingAdapter bookingAdapter;
-
     @Autowired
-    public BookingServiceImpl(BookingAdapter bookingAdapter) {
-        this.bookingAdapter = bookingAdapter;
+    private BotAdapter botAdapter;
+
+    public BookingServiceImpl(BotAdapter botAdapter) {
+        this.botAdapter = botAdapter;
     }
 
     @Override
-    public String chooseCommand(String commandName, Map<Long, String> statusChat, Message message) {
-        statusChat.put(message.getFrom().getId(), commandName);
-        switch (commandName) {
-            case "/start" -> {
-                bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), message.getFrom().getUserName()), "/person");
-                return "Hi, " + message.getFrom().getUserName() + "! Сервис по бронированию.\n" +
-                        "/find - поиск бронирования.\n" +
-                        "/organization - просмотр доступных организаций.";
-            }
-            case "/find" -> {
-                return "Type name of organization: ";
-            }
-            case "/organization" -> {
-                return "Отфильтровать по: rate, bill ";
-            }
-            default -> {
-                return "Command not found";
-            }
-        }
+    public void chooseAction(String command, Message message) {
     }
 
     @Override
@@ -58,13 +39,13 @@ public class BookingServiceImpl implements BookingService {
         switch (mapValue) {
             case "/find" -> {
                 List<OrganizationDto> organizations
-                        = bookingAdapter.getOrganization("/organization?name={name}", messageString);
+                        = botAdapter.getOrganization("/organization?name={name}", messageString);
                 System.out.println(organizations);
                 return getConclusion(message, statusChat, organizations);
             }
             case "/organization" -> {
                 List<OrganizationDto> organizations
-                        = bookingAdapter.getOrganizations("/organization?pageNo=0&pageSize=10&sortBy={rate}", messageString);
+                        = botAdapter.getOrganizations("/organization?pageNo=0&pageSize=10&sortBy={rate}", messageString);
                 return getConclusion(message, statusChat, organizations);
             }
             default -> {
