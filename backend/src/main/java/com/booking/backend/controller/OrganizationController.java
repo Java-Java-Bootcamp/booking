@@ -31,6 +31,12 @@ public class OrganizationController {
     }
 
     @GetMapping("/organization")
+    @RequestMapping(value = "/organization", params = "id")
+    public OrganizationDto getById(@RequestParam Long id) {
+        return organizationService.getById(id);
+    }
+
+    @GetMapping("/organization")
     @RequestMapping(value = "/organization")
     public List<OrganizationDto> getAllOrganization() {
         return organizationService.getAll();

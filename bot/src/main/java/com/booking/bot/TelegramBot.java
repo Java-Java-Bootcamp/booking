@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
@@ -36,16 +35,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     @Autowired
-    private final BookingService bookingService;
-    @Autowired
     private final ChatService chatService;
 
-    private final Map<Long, Integer> lastMessageIdMap = new HashMap<>();
-
-    public TelegramBot(BookingService bookingService, ChatService chatService) {
-        this.bookingService = bookingService;
+    public TelegramBot(ChatService chatService) {
         this.chatService = chatService;
     }
+
+    private final Map<Long, Integer> lastMessageIdMap = new HashMap<>();
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -88,26 +84,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (commandEntity.isPresent()) {
                 String command =
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
-                lastMessageIdMap.put(message.getChatId(), execute(chatService.commandSwitch(message.getFrom().getId(), command, message)).getMessageId());
+                lastMessageIdMap.put(message.getFrom().getId(), execute(chatService.commandSwitch(message.getFrom().getId(), command, message)).getMessageId());
             }
-            return;
         }
-
-        if (message.hasText()) {
-            Optional<String> messageString = bookingService.parseString(message.getText());
-//            String mapValue = chatService.get(message.getFrom().getId());
-//            if (messageString.isPresent()) {
-//                executeString(bookingService.getValueFromChat(mapValue, messageString.get(), message, chatService), message);
-//            }
-        }
-    }
-
-    private void executeString(String executeStr, Message message) throws TelegramApiException {
-        execute(
-                SendMessage.builder()
-                        .text(executeStr)
-                        .chatId(message.getChatId().toString())
-                        .build()
-        );
     }
 }

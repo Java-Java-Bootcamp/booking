@@ -1,12 +1,19 @@
-INSERT INTO "organization" ("id", "average_check", "name", "rating", "schedule","type_organization")
-VALUES (1, 3000.5, 'Россичъ', 9.9, '10:00-22:00','RESTAURANT'),
-       (2, 2000.5, 'Alma', 10, '12:00-23:00','BAR'),
-       (3, 3000.5, 'Uhvat', 9.6, '10:00-22:00','RESTAURANT'),
-       (4, 3000.5, 'Гусятникоff', 9.2, '10:00-22:00','RESTAURANT'),
-       (5, 3000.5, 'Tinta', 10.0, '10:00-22:00','RESTAURANT'),
-       (6, 2000.5, 'Кнорозов бар', 9.8, '12:00-23:00','BAR'),
-       (7, 2000.5, 'Киану', 9.8, '12:00-23:00','BAR'),
-       (8, 2000.5, 'Happy', 9.5, '12:00-23:00','BAR');
+INSERT INTO "organization" ("id", "average_check", "name", "rating", "schedule", "type_organization")
+VALUES (1, 3000.5, 'Россичъ', 9.9, '10:00-22:00', 'RESTAURANT'),
+       (2, 2000.5, 'Alma', 10, '12:00-23:00', 'BAR'),
+       (3, 3000.5, 'Uhvat', 9.6, '10:00-22:00', 'RESTAURANT'),
+       (4, 3000.5, 'Гусятникоff', 9.2, '10:00-22:00', 'RESTAURANT'),
+       (5, 3000.5, 'Tinta', 10.0, '10:00-22:00', 'RESTAURANT'),
+       (6, 2000.5, 'Кнорозов бар', 9.8, '12:00-23:00', 'BAR'),
+       (7, 2000.5, 'Киану', 9.8, '12:00-23:00', 'BAR'),
+       (8, 2000.5, 'Happy', 9.5, '12:00-23:00', 'BAR'),
+       (9, 1564.20, 'Alchemist', 9.10, '12:00-23:00', 'RESTAURANT'),
+       (10, 3320.99, 'У дяди Васи', 3.4, '12:00-23:00', 'RESTAURANT'),
+       (11, 2000.51, 'Direkte', 9.10, '12:00-23:00', 'RESTAURANT'),
+       (12, 1564.21, 'Sun', 7.4, '12:00-23:00', 'RESTAURANT'),
+       (13, 3320.10, 'Star', 9.7, '12:00-23:00', 'RESTAURANT'),
+       (14, 2000.52, 'Beer', 9.3, '12:00-23:00', 'BAR'),
+       (15, 1564.22, 'Vodka', 10.1, '12:00-23:00', 'BAR');
 
 INSERT INTO "some_object" (id, description, organization_id)
 VALUES (1, 'Столик у окна на 8 мест', 1),

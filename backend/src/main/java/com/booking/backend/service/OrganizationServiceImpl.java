@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
 
-    private OrganizationRepository organizationRepository;
-    private OrganizationMapper organizationMapper;
+    private final OrganizationRepository organizationRepository;
+    private final OrganizationMapper organizationMapper;
 
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper) {
         this.organizationRepository = organizationRepository;
@@ -69,6 +69,11 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public void updateOrganization(OrganizationDto organizationDto) {
         organizationRepository.save(organizationMapper.convertFromOrganizationDtoToOrganization(organizationDto));
+    }
+
+    @Override
+    public OrganizationDto getById(Long id) {
+        return organizationMapper.convertFromOrganizationToOrganizationDto(organizationRepository.getById(id));
     }
 }
 

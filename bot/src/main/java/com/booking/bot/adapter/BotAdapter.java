@@ -48,6 +48,7 @@ public class BotAdapter {
                 .bodyToMono(OrganizationDto[].class);
         return Arrays.stream(Objects.requireNonNull(organizationDtoMono.share().block())).collect(Collectors.toList());
     }
+
     public List<OrganizationDto> getOrganizations(String uri) {
         Mono<OrganizationDto[]> organizationDtoMono
                 = client.get()
@@ -55,5 +56,14 @@ public class BotAdapter {
                 .retrieve()
                 .bodyToMono(OrganizationDto[].class);
         return Arrays.stream(Objects.requireNonNull(organizationDtoMono.share().block())).collect(Collectors.toList());
+    }
+
+    public OrganizationDto getOrganizationById(String uri, String id) {
+        Mono<OrganizationDto> organizationDtoMono
+                = client.get()
+                .uri(uri, id)
+                .retrieve()
+                .bodyToMono(OrganizationDto.class);
+        return organizationDtoMono.share().block();
     }
 }

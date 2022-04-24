@@ -13,5 +13,7 @@ public interface OrganizationService {
 
     List<OrganizationDto> getAll();
 
+    OrganizationDto getById(Long id);
+    
     void updateOrganization(OrganizationDto organizationDto);
 }
