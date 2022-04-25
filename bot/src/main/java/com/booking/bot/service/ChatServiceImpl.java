@@ -24,7 +24,7 @@ public class ChatServiceImpl implements ChatService {
     public SendMessage commandSwitch(Long userId, String command, Message message) {
         String userName = message.getFrom().getUserName();
         if ("/start".equals(command)) {
-            botAdapter.addPerson(new PersonDto(userId, userName), "/person");
+            botAdapter.addPerson(new PersonDto(userId, userName));
             chatState.put(userId, "main menu");
             return SendMessage.builder()
                     .text("Hi, " + userName + "! Сервис по бронированию.")
@@ -60,7 +60,7 @@ public class ChatServiceImpl implements ChatService {
                         .build();
             }
             case "back from description" -> {
-                chatState.put(userId,"choice of organizations");
+                chatState.put(userId, "choice of organizations");
                 return EditMessageText.builder()
                         .messageId(lastMessageId)
                         .text("Выбери организацию:")
@@ -78,8 +78,8 @@ public class ChatServiceImpl implements ChatService {
                             .build();
                 }
                 if ("description of the organization".equals(chatState.get(userId))) {
-                    OrganizationDto organization = botAdapter.getOrganizationById("/organization?id={id}", command);
-                    chatData.put(userId,organization.typeOrganization());
+                    OrganizationDto organization = botAdapter.getOrganizationById(command);
+                    chatData.put(userId, organization.typeOrganization());
                     return EditMessageText.builder()
                             .messageId(lastMessageId)
                             .text(organization.name() + ":" +

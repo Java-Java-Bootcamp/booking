@@ -3,7 +3,6 @@ package com.booking.bot.service;
 import com.booking.bot.adapter.BotAdapter;
 import com.booking.bot.dto.OrganizationDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -17,12 +16,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
 
-    @Autowired
-    private BotAdapter botAdapter;
-
-    public MenuServiceImpl(BotAdapter botAdapter) {
-        this.botAdapter = botAdapter;
-    }
+    private final BotAdapter botAdapter;
 
     @Override
     public InlineKeyboardMarkup getKeyboard(Map<Long, String> chatState, Message message, String command) {
@@ -59,17 +53,17 @@ public class MenuServiceImpl implements MenuService {
 
     private InlineKeyboardMarkup organizationTypeKeyboard() {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        botAdapter.getOrganizations("/organization").stream()
+        botAdapter.getOrganizations().stream()
                 .map(OrganizationDto::typeOrganization)
                 .distinct()
-                .forEach( typeOrganization->rowList.add(List.of(InlineKeyboardButton.builder().text(typeOrganization).callbackData(typeOrganization).build())));
+                .forEach(typeOrganization -> rowList.add(List.of(InlineKeyboardButton.builder().text(typeOrganization).callbackData(typeOrganization).build())));
         rowList.add(List.of(InlineKeyboardButton.builder().text("<< Главное меню").callbackData("/start").build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
     private InlineKeyboardMarkup choiceOrganizationKeyboard(String type) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        botAdapter.getOrganizations("/organization").stream()
+        botAdapter.getOrganizations().stream()
                 .filter(o -> o.typeOrganization().equals(type))
                 .forEach(organizationDto -> rowList.add(List.of(InlineKeyboardButton.builder().text(organizationDto.name()).callbackData(organizationDto.id().toString()).build())));
         rowList.add(List.of(InlineKeyboardButton.builder().text("<< Назад").callbackData("/find").build()));

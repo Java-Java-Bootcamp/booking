@@ -4,6 +4,7 @@ import com.booking.backend.dto.OrganizationDto;
 import com.booking.backend.entity.Organization;
 import com.booking.backend.mapper.OrganizationMapper;
 import com.booking.backend.repository.OrganizationRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,16 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationRepository organizationRepository;
     private final OrganizationMapper organizationMapper;
-
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper) {
-        this.organizationRepository = organizationRepository;
-        this.organizationMapper = organizationMapper;
-    }
 
     @Override
     public List<OrganizationDto> getSortedOrganization(Integer pageNo, Integer pageSize, String sortBy) {

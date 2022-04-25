@@ -3,6 +3,7 @@ package com.booking.bot;
 import com.booking.bot.service.BookingService;
 import com.booking.bot.service.ChatService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
+
+    private final ChatService chatService;
+    private final Map<Long, Integer> lastMessageIdMap = new HashMap<>();
 
     @Value("${bot.username}")
     private String username;
@@ -33,15 +38,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     public String getBotToken() {
         return token;
     }
-
-    @Autowired
-    private final ChatService chatService;
-
-    public TelegramBot(ChatService chatService) {
-        this.chatService = chatService;
-    }
-
-    private final Map<Long, Integer> lastMessageIdMap = new HashMap<>();
 
     @Override
     public void onUpdateReceived(Update update) {

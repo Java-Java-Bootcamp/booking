@@ -2,23 +2,17 @@ package com.booking.bot.service;
 
 import com.booking.bot.adapter.BotAdapter;
 import com.booking.bot.dto.OrganizationDto;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@RequiredArgsConstructor
 @Service
-@NoArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    @Autowired
     private BotAdapter botAdapter;
-
-    public BookingServiceImpl(BotAdapter botAdapter) {
-        this.botAdapter = botAdapter;
-    }
 
     @Override
     public void chooseAction(String command, Message message) {
@@ -39,13 +33,13 @@ public class BookingServiceImpl implements BookingService {
         switch (mapValue) {
             case "/find" -> {
                 List<OrganizationDto> organizations
-                        = botAdapter.getOrganization("/organization?name={name}", messageString);
+                        = botAdapter.getOrganization(messageString);
                 System.out.println(organizations);
                 return getConclusion(message, statusChat, organizations);
             }
             case "/organization" -> {
                 List<OrganizationDto> organizations
-                        = botAdapter.getOrganizations("/organization?pageNo=0&pageSize=10&sortBy={rate}", messageString);
+                        = botAdapter.getOrganizations(messageString);
                 return getConclusion(message, statusChat, organizations);
             }
             default -> {

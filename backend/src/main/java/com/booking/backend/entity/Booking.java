@@ -5,10 +5,10 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
 @Entity
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
