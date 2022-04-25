@@ -2,18 +2,15 @@ package com.booking.backend.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Reservation {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -24,17 +24,20 @@ public class OrganizationController {
         return organizationService.getSortedOrganization(pageNo, pageSize, sortBy);
     }
 
-    @GetMapping("/organization")
-    @RequestMapping(value = "/organization", params = "name")
-    public List<OrganizationDto> getAll(@RequestParam String name) {
+    @GetMapping("/organization/name={name}")
+//    @RequestMapping(value = "/organization", params = "name")
+    public List<OrganizationDto> getAll(@PathVariable String name) {
         return organizationService.findAllByName(name);
     }
 
-    @GetMapping("/organization")
-    @RequestMapping(value = "/organization", params = "id")
-    public OrganizationDto getById(@RequestParam Long id) {
+    @GetMapping("/organization/id={id}")
+    public OrganizationDto getById(@PathVariable Long id) {
         return organizationService.getById(id);
     }
+//    @RequestMapping(value = "/organization", params = "id")
+//    public OrganizationDto getById(@RequestParam Long id) {
+//        return organizationService.getById(id);
+//    }
 
     @GetMapping("/organization")
     @RequestMapping(value = "/organization")

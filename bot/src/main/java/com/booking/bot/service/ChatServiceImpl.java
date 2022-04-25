@@ -4,7 +4,6 @@ import com.booking.bot.adapter.BotAdapter;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.PersonDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -16,19 +15,11 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
-    @Autowired
-    private MenuService menuService;
+    private final MenuService menuService;
+    private final BotAdapter botAdapter;
 
-    @Autowired
-    private BotAdapter botAdapter;
-
-    public ChatServiceImpl(BotAdapter botAdapter, MenuService menuService) {
-        this.botAdapter = botAdapter;
-        this.menuService = menuService;
-    }
-
-    Map<Long, String> chatState = new HashMap<>();
-    Map<Long, String> chatData = new HashMap<>();
+    private final Map<Long, String> chatState = new HashMap<>();
+    private final Map<Long, String> chatData = new HashMap<>();
 
     public SendMessage commandSwitch(Long userId, String command, Message message) {
         String userName = message.getFrom().getUserName();
