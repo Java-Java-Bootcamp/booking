@@ -20,5 +20,6 @@ public class PersonController {
     @PostMapping("/person")
     public void addNewBooking(@RequestBody PersonDto personDto) {
         personService.updatePerson(personDto);
+
     }
 }

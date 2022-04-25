@@ -1,7 +1,10 @@
 package com.booking.bot.adapter;
 
+import com.booking.bot.client.BookingClient;
+import com.booking.bot.client.PersonClient;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.PersonDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -14,28 +17,20 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class BookingAdapter {
 
-    private final WebClient client;
-
-    public BookingAdapter() {
-        this.client = WebClient.create("http://localhost:8080");
-    }
+    private final BookingClient bookingClient;
+    private final PersonClient personClient;
 
     public void addPerson(PersonDto personDto, String uri) {
-        client
-                .post()
-                .uri(uri)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(Mono.just(personDto), PersonDto.class)
-                .retrieve()
-                .bodyToMono(String.class)
-                .share()
-                .block();
+        personClient.addNewBooking(personDto);
+        // todo: обрабатывать ошибки
     }
 
 
     public List<OrganizationDto> getOrganization(String uri, String organizationName) {
+
         return Arrays.asList(Objects.requireNonNull(client.get().uri(uri, organizationName)
                 .retrieve().bodyToMono(OrganizationDto[].class).share().block()));
     }
