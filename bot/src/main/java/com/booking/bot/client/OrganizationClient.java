@@ -10,17 +10,25 @@ import java.util.List;
 @FeignClient(url = "localhost:8080", name = "organization-client")
 public interface OrganizationClient {
 
-    @GetMapping("/organization/pageNo={pageNo},pageSize={pageSize},sortBy={sortBy}")
-    List<OrganizationDto> getAll(@PathVariable Integer pageNo,
-                                 @PathVariable Integer pageSize,
-                                 @PathVariable String sortBy);
+    @RequestMapping(value = "/organization", params = {"pageNo", "pageSize", "sortBy"}, method = RequestMethod.GET)
+    List<OrganizationDto> getSort(@RequestParam Integer pageNo,
+                                  @RequestParam Integer pageSize,
+                                  @RequestParam String sortBy);
 
-    @GetMapping("/organization/name={name}")
-    List<OrganizationDto> getAll(@PathVariable String name);
+    @RequestMapping(value = "/organization", params = {"pageNo", "pageSize", "sortBy", "type"}, method = RequestMethod.GET)
+    <TypeOrganization> List<OrganizationDto> getSortByType(@RequestParam Integer pageNo,
+                                                           @RequestParam Integer pageSize,
+                                                           @RequestParam String sortBy,
+                                                           @RequestParam TypeOrganization type);
 
-    @GetMapping("/organization/id={id}")
-    OrganizationDto getById(@PathVariable Long id);
+    @RequestMapping(value = "/organization", params = {"name"}, method = RequestMethod.GET)
+    List<OrganizationDto> getAll(@RequestParam String name);
 
+    @RequestMapping(value = "/organization", params = {"id"}, method = RequestMethod.GET)
+    OrganizationDto getById(@RequestParam Long id);
+
+    @RequestMapping(value = "/organization", params = {"type"}, method = RequestMethod.GET)
+    <TypeOrganization> List<OrganizationDto> getByType(@RequestParam TypeOrganization type);
 
     @GetMapping("/organization")
     List<OrganizationDto> getAllOrganization();

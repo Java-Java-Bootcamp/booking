@@ -30,10 +30,10 @@ public class MenuServiceImpl implements MenuService {
             }
             case "choice of organizations" -> {
                 chatState.put(message.getFrom().getId(), "description of the organization");
-                return choiceOrganizationKeyboard(command);
+                return choiceOrganizationKeyboard(command,0);
             }
             case "description of the organization" -> {
-                return descriptionOrganizationKeyboard(command);
+                return descriptionOrganizationKeyboard();
             }
             default -> {
                 return null;
@@ -44,7 +44,10 @@ public class MenuServiceImpl implements MenuService {
     private InlineKeyboardMarkup mainKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
-        keyboardButtonsRow.add(InlineKeyboardButton.builder().text("Поиск").callbackData("/find").build());
+        keyboardButtonsRow.add(InlineKeyboardButton.builder()
+                .text("Поиск")
+                .callbackData("/find")
+                .build());
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow);
         inlineKeyboardMarkup.setKeyboard(rowList);
@@ -56,25 +59,55 @@ public class MenuServiceImpl implements MenuService {
         botAdapter.getOrganizations().stream()
                 .map(OrganizationDto::typeOrganization)
                 .distinct()
-                .forEach(typeOrganization -> rowList.add(List.of(InlineKeyboardButton.builder().text(typeOrganization).callbackData(typeOrganization).build())));
-        rowList.add(List.of(InlineKeyboardButton.builder().text("<< Главное меню").callbackData("/start").build()));
+                .forEach(typeOrganization -> rowList.add(List.of(InlineKeyboardButton.builder()
+                        .text(typeOrganization)
+                        .callbackData(typeOrganization)
+                        .build())));
+        rowList.add(List.of(InlineKeyboardButton.builder()
+                .text("<< Главное меню")
+                .callbackData("/start")
+                .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
-    private InlineKeyboardMarkup choiceOrganizationKeyboard(String type) {
+    public InlineKeyboardMarkup choiceOrganizationKeyboard(String type,Integer page) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        botAdapter.getOrganizations().stream()
+        List<OrganizationDto> organizationsByType = botAdapter.getOrganizationsByType(type);
+        long countOrganizations = organizationsByType.stream()
                 .filter(o -> o.typeOrganization().equals(type))
-                .forEach(organizationDto -> rowList.add(List.of(InlineKeyboardButton.builder().text(organizationDto.name()).callbackData(organizationDto.id().toString()).build())));
-        rowList.add(List.of(InlineKeyboardButton.builder().text("<< Назад").callbackData("/find").build()));
-        rowList.add(List.of(InlineKeyboardButton.builder().text("<< Главное меню").callbackData("/start").build()));
+                .count();
+        List<InlineKeyboardButton> pagesButtonRow = new ArrayList<>();
+        long pages = countOrganizations >= 10 && countOrganizations % 10 == 0 ? countOrganizations / 10 : countOrganizations / 10 + 1;
+        for (int i = 1; i <= pages; i++) {
+            pagesButtonRow.add(InlineKeyboardButton.builder().text(String.valueOf(i)).callbackData(String.valueOf(i)).build());
+        }
+        organizationsByType.forEach(organizationDto -> rowList.add(
+                List.of(InlineKeyboardButton.builder()
+                        .text(organizationDto.name())
+                        .callbackData(organizationDto.id().toString())
+                        .build())));
+        rowList.add(pagesButtonRow);
+        rowList.add(List.of(InlineKeyboardButton.builder()
+                .text("<< Назад")
+                .callbackData("/find")
+                .build()));
+        rowList.add(List.of(InlineKeyboardButton.builder()
+                .text("<< Главное меню")
+                .callbackData("/start")
+                .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
-    private InlineKeyboardMarkup descriptionOrganizationKeyboard(String id) {
+    private InlineKeyboardMarkup descriptionOrganizationKeyboard() {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(List.of(InlineKeyboardButton.builder().text("<< Назад").callbackData("back from description").build()));
-        rowList.add(List.of(InlineKeyboardButton.builder().text("<< Главное меню").callbackData("/start").build()));
+        rowList.add(List.of(InlineKeyboardButton.builder()
+                .text("<< Назад")
+                .callbackData("back from description")
+                .build()));
+        rowList.add(List.of(InlineKeyboardButton.builder()
+                .text("<< Главное меню")
+                .callbackData("/start")
+                .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 }

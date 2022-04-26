@@ -1,6 +1,5 @@
 package com.booking.bot.adapter;
 
-import com.booking.bot.client.BookingClient;
 import com.booking.bot.client.OrganizationClient;
 import com.booking.bot.client.PersonClient;
 import com.booking.bot.dto.OrganizationDto;
@@ -14,7 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BotAdapter {
 
-    private final BookingClient bookingClient;
     private final PersonClient personClient;
     private final OrganizationClient organizationClient;
 
@@ -22,17 +20,16 @@ public class BotAdapter {
         personClient.addNewBooking(personDto);
     }
 
-
-    public List<OrganizationDto> getOrganization(String organizationName) {
-        return organizationClient.getAll(organizationName);
-    }
-
-    public List<OrganizationDto> getOrganizations(String sortBy) {
-        return organizationClient.getAll(0, 10, sortBy);
+    public List<OrganizationDto> getSortedOrganizationsByType(Integer pageNo, Integer pageSize, String sortBy, String type) {
+        return organizationClient.getSortByType(pageNo, pageSize, sortBy, type);
     }
 
     public List<OrganizationDto> getOrganizations() {
         return organizationClient.getAllOrganization();
+    }
+
+    public List<OrganizationDto> getOrganizationsByType(String type) {
+        return organizationClient.getByType(type);
     }
 
     public OrganizationDto getOrganizationById(String id) {

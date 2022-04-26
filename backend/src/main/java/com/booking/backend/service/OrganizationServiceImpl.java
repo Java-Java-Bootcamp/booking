@@ -2,6 +2,7 @@ package com.booking.backend.service;
 
 import com.booking.backend.dto.OrganizationDto;
 import com.booking.backend.entity.Organization;
+import com.booking.backend.entity.TypeOrganization;
 import com.booking.backend.mapper.OrganizationMapper;
 import com.booking.backend.repository.OrganizationRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +50,21 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
     }
 
+    public List<OrganizationDto> getSortedOrganizationByType(Integer pageNo, Integer pageSize, String sortBy, TypeOrganization type) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Page<Organization> pagedResult = organizationRepository.findAllByTypeOrganization(paging, type);
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent().stream()
+                    .map(organizationMapper::convertFromOrganizationToOrganizationDto)
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
     @Override
     public List<OrganizationDto> findAllByName(String name) {
-        return organizationRepository.getAllByName(name).stream()
+        return organizationRepository.findAllByName(name).stream()
                 .map(organizationMapper::convertFromOrganizationToOrganizationDto)
                 .collect(Collectors.toList());
     }
@@ -66,6 +79,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public void updateOrganization(OrganizationDto organizationDto) {
         organizationRepository.save(organizationMapper.convertFromOrganizationDtoToOrganization(organizationDto));
+    }
+
+    @Override
+    public List<OrganizationDto> getByType(TypeOrganization type) {
+        return organizationRepository.findAllByTypeOrganization(type).stream().map(organizationMapper::convertFromOrganizationToOrganizationDto)
+                .collect(Collectors.toList());
     }
 
     @Override
