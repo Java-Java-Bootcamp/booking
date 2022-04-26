@@ -2,16 +2,15 @@ package com.booking.backend.mapper;
 
 import com.booking.backend.dto.SomeObjectDto;
 import com.booking.backend.entity.SomeObject;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
+@Getter
+@RequiredArgsConstructor
 @Component
 public class SomeObjectMapperImpl implements SomeObjectMapper {
 
-    private OrganizationMapper organizationMapper;
-
-    public SomeObjectMapperImpl(OrganizationMapper organizationMapper) {
-        this.organizationMapper = organizationMapper;
-    }
+    private final OrganizationMapper organizationMapper;
 
     @Override
     public SomeObject convertFromSomeObjectDtoToSomeObject(SomeObjectDto someObjectDto) {

@@ -22,6 +22,7 @@ CREATE TABLE "public"."organization"
     "name"          character varying(255),
     "rating"        double precision,
     "schedule"      character varying(255),
+    "type_organization" character varying(255),
     CONSTRAINT "organization_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
 

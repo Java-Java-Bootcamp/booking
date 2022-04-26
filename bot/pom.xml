@@ -27,6 +27,10 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<!-- https://github.com/rubenlagus/TelegramBots/tree/master/telegrambots-spring-boot-starter -->
 		<dependency>
 			<groupId>org.telegram</groupId>
@@ -41,7 +45,14 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-    </dependencies>
+		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+
+	</dependencies>
 
 	<build>
 		<plugins>
