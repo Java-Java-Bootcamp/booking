@@ -9,10 +9,8 @@ public interface PersonMapper {
 
     Person convert(PersonDto personDto);
 
+    PersonDto convertFromPersonToPersonDto(Person person);
+
     PersonDto convertFromPersonToPersonDtoInController(Optional<Person> person);
-
-    PersonDto convert(Person person);
-
-    Person convertFromPersonDtoToPersonInController(Optional<PersonDto> personDto);
 
     }
