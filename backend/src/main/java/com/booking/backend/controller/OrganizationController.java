@@ -36,8 +36,4 @@ public class OrganizationController {
         return organizationService.getAll();
     }
 
-    @PostMapping("/organization")
-    public void addNewBooking(@RequestBody OrganizationDto organizationDto) {
-        organizationService.updateOrganization(organizationDto);
-    }
 }

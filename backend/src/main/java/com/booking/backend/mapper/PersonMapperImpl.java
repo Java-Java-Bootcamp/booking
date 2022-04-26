@@ -10,7 +10,7 @@ import java.util.Optional;
 public class PersonMapperImpl implements PersonMapper {
 
     @Override
-    public Person convertFromPersonDtoToPerson(PersonDto personDto) {
+    public Person convert(PersonDto personDto) {
         return new Person(personDto.id(), personDto.name());
     }
 
@@ -19,7 +19,7 @@ public class PersonMapperImpl implements PersonMapper {
         return person.map(value -> new PersonDto(value.getId(), value.getName())).orElse(null);
     }
     @Override
-    public PersonDto convertFromPersonToPersonDto(Person person) {
+    public PersonDto convert(Person person) {
         return new PersonDto(person.getId(), person.getName());
     }
 }

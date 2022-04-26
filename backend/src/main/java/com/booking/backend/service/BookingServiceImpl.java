@@ -16,11 +16,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper bookingMapper;
 
     @Override
-    public List<BookingDto> getAllBookings(Integer pageNo, Integer pageSize, String sortBy) {
-        return null;
-    }
-
-    @Override
     public void addNewBooking(BookingDto bookingDto) {
         bookingRepository.save(bookingMapper.convertFromBookingDtoToBooking(bookingDto));
     }

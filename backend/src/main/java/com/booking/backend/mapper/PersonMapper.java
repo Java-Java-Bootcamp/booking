@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface PersonMapper {
 
-    Person convertFromPersonDtoToPerson(PersonDto personDto);
+    Person convert(PersonDto personDto);
 
-    PersonDto convertFromPersonToPersonDto(Person person);
+    PersonDto convert(Person person);
 
     PersonDto convertFromPersonToPersonDtoInController(Optional<Person> person);
 
