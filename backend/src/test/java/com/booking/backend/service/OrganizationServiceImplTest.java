@@ -55,7 +55,8 @@ class OrganizationServiceImplTest {
 
     @Test
     void updateOrganization() {
-        OrganizationDto organizationDto = new OrganizationDto(1L, "Org", "10-22", 234.0, 8.7);
+        OrganizationDto organizationDto
+                = new OrganizationDto(1L, "Org", "10-22", 234.0, 8.7, "Bar");
         organizationService.updateOrganization(organizationDto);
         organizationMapper.convertFromOrganizationDtoToOrganization(organizationDto);
         organizationRepository.save(any());

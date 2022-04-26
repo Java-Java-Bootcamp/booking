@@ -1,6 +1,7 @@
 package com.booking.backend.repository;
 
 import com.booking.backend.entity.Organization;
+import com.booking.backend.entity.TypeOrganization;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,8 @@ class OrganizationRepositoryTest {
 
     @BeforeEach
     void init() {
-        organizationRepository.save(new Organization(null, "Org", "1-2", 2000.4, 8.7));
-        organizationRepository.save(new Organization(null, "Org", "1-2", 2000.4, 8.7));
+        organizationRepository.save(new Organization(null, "Org", "1-2", 2000.4, 8.7, TypeOrganization.BAR));
+        organizationRepository.save(new Organization(null, "Org", "1-2", 2000.4, 8.7, TypeOrganization.BAR));
 
     }
 

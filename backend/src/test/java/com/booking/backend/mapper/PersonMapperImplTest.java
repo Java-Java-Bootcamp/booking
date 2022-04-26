@@ -24,12 +24,6 @@ class PersonMapperImplTest {
     }
 
     @Test
-    void convertFromPersonToPersonDtoInController() {
-        assertEquals(personEx, personMapper.convertFromPersonDtoToPersonInController(java.util.Optional.ofNullable(personDtoEx)));
-
-    }
-
-    @Test
     void convertFromPersonToPersonDto() {
         assertEquals(personDtoEx, personMapper.convert(personEx));
     }
