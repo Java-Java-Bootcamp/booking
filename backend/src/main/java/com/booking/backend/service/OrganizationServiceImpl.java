@@ -22,6 +22,8 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationMapper organizationMapper;
 
+
+
     @Override
     public List<OrganizationDto> getSortedOrganization(Integer pageNo, Integer pageSize, String sortBy) {
 
@@ -42,7 +44,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         Page<Organization> pagedResult = organizationRepository.findAll(paging);
         if (pagedResult.hasContent()) {
             return pagedResult.getContent().stream()
-                    .map(organizationMapper::convertFromOrganizationToOrganizationDto)
+                    .map(organizationMapper::convert)
                     .collect(Collectors.toList());
         } else {
             return new ArrayList<>();
@@ -52,20 +54,20 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public List<OrganizationDto> findAllByName(String name) {
         return organizationRepository.getAllByName(name).stream()
-                .map(organizationMapper::convertFromOrganizationToOrganizationDto)
+                .map(organizationMapper::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<OrganizationDto> getAll() {
         return organizationRepository.findAll().stream()
-                .map(organizationMapper::convertFromOrganizationToOrganizationDto)
+                .map(organizationMapper::convert)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void updateOrganization(OrganizationDto organizationDto) {
-        organizationRepository.save(organizationMapper.convertFromOrganizationDtoToOrganization(organizationDto));
+        organizationRepository.save(organizationMapper.convert(organizationDto));
     }
 
     @Override

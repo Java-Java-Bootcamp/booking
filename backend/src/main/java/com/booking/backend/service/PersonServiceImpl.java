@@ -14,7 +14,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonDto getPersonById(Long id) {
-        return mapper.convertFromPersonToPersonDtoInController(personRepository.findById(id));
+        return mapper.convert(personRepository.findById(id));
     }
 
 

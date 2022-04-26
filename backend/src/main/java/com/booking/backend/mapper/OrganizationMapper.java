@@ -1,18 +1,15 @@
 package com.booking.backend.mapper;
 
-import com.booking.backend.dto.BookingDto;
 import com.booking.backend.dto.OrganizationDto;
-import com.booking.backend.dto.PersonDto;
-import com.booking.backend.entity.Booking;
 import com.booking.backend.entity.Organization;
-import com.booking.backend.entity.Person;
+import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
+@Mapper
+@Component
 public interface OrganizationMapper {
 
-    OrganizationDto convertFromOrganizationToOrganizationDto(Organization organization);
-
-    Organization convertFromOrganizationDtoToOrganization(OrganizationDto organizationDto);
+    OrganizationDto convert(Organization organization);
+    Organization convert(OrganizationDto organizationDto);
 
 }

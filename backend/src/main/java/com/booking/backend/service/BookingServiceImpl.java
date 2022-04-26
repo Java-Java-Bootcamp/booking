@@ -3,7 +3,8 @@ package com.booking.backend.service;
 import com.booking.backend.dto.BookingDto;
 import com.booking.backend.mapper.BookingMapper;
 import com.booking.backend.repository.BookingRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void addNewBooking(BookingDto bookingDto) {
-        bookingRepository.save(bookingMapper.convertFromBookingDtoToBooking(bookingDto));
+        bookingRepository.save(bookingMapper.convert(bookingDto));
     }
 }
