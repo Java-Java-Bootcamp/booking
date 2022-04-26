@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 public class OrganizationController {
 
-    private final OrganizationService organizationService;
+    private OrganizationService organizationService;
 
     @GetMapping("/organization/pageNo={pageNo},pageSize={pageSize},sortBy={sortBy}")
     public List<OrganizationDto> getAll(@PathVariable Integer pageNo,
