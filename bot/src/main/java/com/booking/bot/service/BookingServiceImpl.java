@@ -1,50 +1,21 @@
 package com.booking.bot.service;
 
-import com.booking.bot.adapter.BookingAdapter;
+import com.booking.bot.adapter.BotAdapter;
 import com.booking.bot.dto.OrganizationDto;
-import com.booking.bot.dto.PersonDto;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@RequiredArgsConstructor
 @Service
-@NoArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    private BookingAdapter bookingAdapter;
-
-    @Autowired
-    public BookingServiceImpl(BookingAdapter bookingAdapter) {
-        this.bookingAdapter = bookingAdapter;
-    }
+    private BotAdapter botAdapter;
 
     @Override
-    public String chooseCommand(String commandName, Map<Long, String> statusChat, Message message) {
-
-        statusChat.put(message.getFrom().getId(), commandName);
-        switch (commandName) {
-            case "/start" -> {
-                bookingAdapter.addPerson(new PersonDto(message.getFrom().getId(), message.getFrom().getUserName()), "/person");
-                return "Hi " + message.getFrom().getUserName() + "! Сервис по бронированию.\n" +
-                        "/find - поиск бронирования.\n" +
-                        "/organization - просмотр доступных организаций.";
-            }
-            case "/sign_up" -> {
-                return "Type your name, please: ";
-            }
-            case "/find" -> {
-                return "Type name of organization: ";
-            }
-            case "/organization" -> {
-                return "Отфильтровать по: rate, bill ";
-            }
-            default -> {
-                return "Command not found";
-            }
-        }
+    public void chooseAction(String command, Message message) {
     }
 
     @Override
@@ -62,16 +33,19 @@ public class BookingServiceImpl implements BookingService {
         switch (mapValue) {
             case "/find" -> {
                 List<OrganizationDto> organizations
-                        = bookingAdapter.getOrganization("/organization?name={name}", messageString);
+                        = botAdapter.getOrganization(messageString);
+                System.out.println(organizations);
                 return getConclusion(message, statusChat, organizations);
             }
-
             case "/organization" -> {
                 List<OrganizationDto> organizations
-                        = bookingAdapter.getOrganizations("/organization?pageNo=0&pageSize=10&sortBy={rate}", messageString);
+                        = botAdapter.getOrganizations(messageString);
                 return getConclusion(message, statusChat, organizations);
             }
             default -> {
+                System.out.println(mapValue);
+                System.out.println(messageString);
+                System.out.println("def");
                 return "Organization not found! Try one more time: /find";
             }
         }
@@ -79,6 +53,7 @@ public class BookingServiceImpl implements BookingService {
 
     private String getConclusion(Message message, Map<Long, String> statusChat, List<OrganizationDto> organizations) {
         if (organizations.isEmpty()) {
+            System.out.println("empty");
             return "Organization not found! Try one more time: /find";
         }
         StringBuilder stringMessage = new StringBuilder();

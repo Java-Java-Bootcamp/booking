@@ -5,6 +5,5 @@ public record ReservationDto(Long id,
                              Integer ending,
                              String date,
                              SomeObjectDto someObjectDto,
-                             BookingDto bookingDto
-                             ) {
+                             BookingDto bookingDto) {
 }

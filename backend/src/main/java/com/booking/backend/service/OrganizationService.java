@@ -1,7 +1,6 @@
 package com.booking.backend.service;
 
 import com.booking.backend.dto.OrganizationDto;
-import com.booking.backend.entity.Organization;
 
 import java.util.List;
 
@@ -12,6 +11,8 @@ public interface OrganizationService {
     List<OrganizationDto> findAllByName(String name);
 
     List<OrganizationDto> getAll();
+
+    OrganizationDto getById(Long id);
 
     void updateOrganization(OrganizationDto organizationDto);
 }

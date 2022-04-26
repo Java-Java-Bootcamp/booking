@@ -1,13 +1,13 @@
 package com.booking.bot;
 
 import com.booking.bot.service.BookingService;
+import com.booking.bot.service.ChatService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
@@ -17,23 +17,17 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.*;
 
 @Component
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
+
+    private final ChatService chatService;
+    private final Map<Long, Integer> lastMessageIdMap = new HashMap<>();
 
     @Value("${bot.username}")
     private String username;
 
     @Value("${bot.token}")
     private String token;
-
-    private final Map<Long, String> statusChat = new HashMap<>();
-
-    private BookingService bookingService;
-
-    @Autowired
-    public TelegramBot(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
 
     @Override
     public String getBotUsername() {
@@ -55,43 +49,39 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         }
         if (update.hasCallbackQuery()) {
-            handleCallback(update.getCallbackQuery());
+            try {
+                handleCallback(update.getCallbackQuery());
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void handleCallback(CallbackQuery callbackQuery) {
-        //place for buttons. Not ready
-//        String[] param = callbackQuery.getData().split(":");
+    private void handleCallback(CallbackQuery callbackQuery) throws TelegramApiException {
+        if (!callbackQuery.getData().isEmpty()) {
+            execute(
+                    chatService.commandSwitch(
+                            callbackQuery.getMessage().getFrom().getId(),
+                            callbackQuery.getData(),
+                            callbackQuery.getMessage(),
+                            lastMessageIdMap.get(callbackQuery.getMessage().getChatId())
+                    )
+            );
+
+        } else {
+            System.out.println("callbackQuery is empty");
+        }
+        System.out.println(callbackQuery.getData());
     }
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
-
-        if (message.hasText() && message.hasEntities()) {
+        if (message.isCommand()) {
             Optional<MessageEntity> commandEntity = message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
             if (commandEntity.isPresent()) {
                 String command =
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
-                String s = bookingService.chooseCommand(command, statusChat, message);
-                executeString(s, message);
-            }
-            return;
-        }
-
-        if (message.hasText()) {
-            Optional<String> messageString = bookingService.parseString(message.getText());
-            String mapValue = statusChat.get(message.getFrom().getId());
-            if (messageString.isPresent()) {
-                executeString(bookingService.getValueFromChat(mapValue, messageString.get(), message, statusChat), message);
+                lastMessageIdMap.put(message.getFrom().getId(), execute(chatService.commandSwitch(message.getFrom().getId(), command, message)).getMessageId());
             }
         }
-    }
-
-    private void executeString(String executeStr, Message message) throws TelegramApiException {
-        execute(
-                SendMessage.builder()
-                        .text(executeStr)
-                        .chatId(message.getChatId().toString())
-                        .build()
-        );
     }
 }
