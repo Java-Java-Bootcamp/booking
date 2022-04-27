@@ -34,7 +34,7 @@ class BookingServiceImplTest {
     void addNewBooking() {
         BookingDto bookingDto = new BookingDto(1L, new PersonDto(1L, "asd"));
         bookingService.addNewBooking(bookingDto);
-        verify(bookingMapper, times(1)).convertFromBookingDtoToBooking(bookingDto);
+        verify(bookingMapper, times(1)).convert(bookingDto);
         verify(bookingRepository, times(1)).save(any());
     }
 }

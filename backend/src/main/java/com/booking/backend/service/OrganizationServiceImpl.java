@@ -71,7 +71,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public OrganizationDto getById(Long id) {
-        return organizationMapper.convertFromOrganizationToOrganizationDto(organizationRepository.getById(id));
+        return organizationMapper.convert(organizationRepository.getById(id));
     }
 }
 
