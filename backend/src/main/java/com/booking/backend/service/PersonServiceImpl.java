@@ -6,15 +6,15 @@ import com.booking.backend.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
     private final PersonMapper mapper;
 
     @Override
     public PersonDto getPersonById(Long id) {
-        return mapper.convertFromPersonToPersonDtoInController(personRepository.findById(id));
+        return mapper.convert(personRepository.findById(id));
     }
 
 
