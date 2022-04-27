@@ -44,7 +44,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (pagedResult.hasContent()) {
             return pagedResult.getContent().stream()
                     .map(organizationMapper::convert)
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             return new ArrayList<>();
         }
@@ -54,14 +54,14 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<OrganizationDto> findAllByName(String name) {
         return organizationRepository.getAllByName(name).stream()
                 .map(organizationMapper::convert)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<OrganizationDto> getAll() {
         return organizationRepository.findAll().stream()
                 .map(organizationMapper::convert)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
