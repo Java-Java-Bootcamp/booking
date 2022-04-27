@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 @Mapper(componentModel = "spring")
 public interface BookingMapper {
 
-    BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
-
     BookingDto convert (Booking booking);
 
     Booking convert(BookingDto bookingDto);

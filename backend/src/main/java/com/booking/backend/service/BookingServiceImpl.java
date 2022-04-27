@@ -5,6 +5,7 @@ import com.booking.backend.mapper.BookingMapper;
 import com.booking.backend.repository.BookingRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

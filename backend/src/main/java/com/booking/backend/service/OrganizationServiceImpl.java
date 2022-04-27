@@ -16,14 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class OrganizationServiceImpl implements OrganizationService {
 
-    private OrganizationRepository organizationRepository;
-    private OrganizationMapper organizationMapper;
-
-
+    private final OrganizationRepository organizationRepository;
+    private final OrganizationMapper organizationMapper;
 
     @Override
     public List<OrganizationDto> getSortedOrganization(Integer pageNo, Integer pageSize, String sortBy) {

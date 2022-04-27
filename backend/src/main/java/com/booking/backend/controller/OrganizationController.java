@@ -10,9 +10,10 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 public class OrganizationController {
 
-    private OrganizationService organizationService;
+    private final OrganizationService organizationService;
 
     @GetMapping("/organization/pageNo={pageNo},pageSize={pageSize},sortBy={sortBy}")
     public List<OrganizationDto> getAll(@PathVariable Integer pageNo,

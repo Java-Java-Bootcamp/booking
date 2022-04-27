@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
     private final PersonMapper mapper;

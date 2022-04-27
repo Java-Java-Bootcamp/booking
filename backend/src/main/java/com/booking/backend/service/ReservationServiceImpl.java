@@ -10,18 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
 
-    private ReservationRepository reservationRepository;
-    private ReservationMapper reservationMapper;
-    private BookingService bookingService;
-
-    public ReservationServiceImpl(ReservationRepository reservationRepository,
-                                  ReservationMapper reservationMapper, BookingService bookingService) {
-        this.reservationRepository = reservationRepository;
-        this.reservationMapper = reservationMapper;
-        this.bookingService = bookingService;
-    }
+    private final ReservationRepository reservationRepository;
+    private final ReservationMapper reservationMapper;
+    private final BookingService bookingService;
 
     @Override
     @Transactional
