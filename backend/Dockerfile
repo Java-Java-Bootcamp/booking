@@ -1,13 +1,8 @@
-FROM openjdk:16-alpine3.13
+FROM java:latest
 
-WORKDIR /app
+ENV USERNAME=${USERNAME}
+ENV PASSWORD=${PASSWORD}
 
-COPY .mvn/ .mvn
+COPY target/backend-0.0.1-SNAPSHOT.jar backend-0.0.1-SNAPSHOT.jar
 
-COPY mvnw pom.xml ./
-
-RUN ./mvnw dependency:go-offline
-
-COPY src ./src
-
-CMD ["./mvnw", "spring-boot:run"]
+CMD java -jar ./backend-0.0.1-SNAPSHOT.jar

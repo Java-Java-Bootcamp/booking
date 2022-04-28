@@ -2,7 +2,7 @@ version: '2'
 
 services:
   booking:
-    image: 'booking-back:openjdk.16'
+    image: 'com-booking-backend:latest'
     container_name: booking
     ports:
       - '8080:8080'
@@ -11,7 +11,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=Domele42
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
   db:
@@ -21,7 +21,7 @@ services:
       - '5432:5432'
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Domele42
+      - POSTGRES_PASSWORD=postgres
       - POSTGRESS_DB=postgres
 volumes:
   postgres:
