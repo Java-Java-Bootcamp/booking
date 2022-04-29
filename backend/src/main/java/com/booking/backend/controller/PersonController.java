@@ -10,8 +10,8 @@ import com.booking.backend.dto.PersonDto;
 public class PersonController {
     private final PersonService personService;
 
-    @RequestMapping(value = "/person", params = {"id"}, method = RequestMethod.GET)
-    public PersonDto getPersonById(@RequestParam Long id) {
+    @GetMapping("/person/{id}")
+    public PersonDto getById(@PathVariable Long id) {
         return personService.getPersonById(id);
     }
 

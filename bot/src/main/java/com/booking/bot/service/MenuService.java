@@ -1,10 +1,9 @@
 package com.booking.bot.service;
 
-import org.telegram.telegrambots.meta.api.objects.Message;
+import com.booking.bot.state.Context;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
-import java.util.Map;
-
 public interface MenuService {
-    InlineKeyboardMarkup getKeyboard(Map<Long,String> chatState, Message message, String command);
+    InlineKeyboardMarkup getMainKeyboard();
+    InlineKeyboardMarkup getOrganizationTypeKeyboard(Context context);
 }

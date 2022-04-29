@@ -5,6 +5,7 @@ import com.booking.bot.client.PersonClient;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.dto.PersonDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,16 +21,12 @@ public class BotAdapter {
         personClient.addNewBooking(personDto);
     }
 
-    public List<OrganizationDto> getSortedOrganizationsByType(Integer pageNo, Integer pageSize, String sortBy, String type) {
-        return organizationClient.getSortByType(pageNo, pageSize, sortBy, type);
+    public List<OrganizationDto> getAllOrganizationsByType(String type) {
+        return organizationClient.getAllOrganizationsByType(type,Pageable.unpaged()).getContent();
     }
 
-    public List<OrganizationDto> getOrganizations() {
-        return organizationClient.getAllOrganization();
-    }
-
-    public List<OrganizationDto> getOrganizationsByType(String type) {
-        return organizationClient.getByType(type);
+    public List<OrganizationDto> getAllOrganizations(){
+        return organizationClient.getAllOrganizations(Pageable.unpaged()).getContent();
     }
 
     public OrganizationDto getOrganizationById(String id) {

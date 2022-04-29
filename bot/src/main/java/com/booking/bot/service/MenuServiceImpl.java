@@ -2,15 +2,14 @@ package com.booking.bot.service;
 
 import com.booking.bot.adapter.BotAdapter;
 import com.booking.bot.dto.OrganizationDto;
+import com.booking.bot.state.Context;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -18,34 +17,12 @@ public class MenuServiceImpl implements MenuService {
 
     private final BotAdapter botAdapter;
 
-    @Override
-    public InlineKeyboardMarkup getKeyboard(Map<Long, String> chatState, Message message, String command) {
-        switch (chatState.get(message.getFrom().getId())) {
-            case "main menu" -> {
-                return mainKeyboard();
-            }
-            case "choice of organization type" -> {
-                chatState.put(message.getFrom().getId(), "choice of organizations");
-                return organizationTypeKeyboard();
-            }
-            case "choice of organizations" -> {
-                chatState.put(message.getFrom().getId(), "description of the organization");
-                return choiceOrganizationKeyboard(command,0);
-            }
-            case "description of the organization" -> {
-                return descriptionOrganizationKeyboard();
-            }
-            default -> {
-                return null;
-            }
-        }
-    }
-
-    private InlineKeyboardMarkup mainKeyboard() {
+    public InlineKeyboardMarkup getMainKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(InlineKeyboardButton.builder()
                 .text("Поиск")
+                //@TODO: сделать сериализацию-десериализацию объекта Context
                 .callbackData("/find")
                 .build());
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -54,9 +31,9 @@ public class MenuServiceImpl implements MenuService {
         return inlineKeyboardMarkup;
     }
 
-    private InlineKeyboardMarkup organizationTypeKeyboard() {
+    public InlineKeyboardMarkup getOrganizationTypeKeyboard(Context context) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        botAdapter.getOrganizations().stream()
+        botAdapter.getAllOrganizations().stream()
                 .map(OrganizationDto::typeOrganization)
                 .distinct()
                 .forEach(typeOrganization -> rowList.add(List.of(InlineKeyboardButton.builder()
@@ -70,9 +47,9 @@ public class MenuServiceImpl implements MenuService {
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
-    public InlineKeyboardMarkup choiceOrganizationKeyboard(String type,Integer page) {
+    public InlineKeyboardMarkup getChoiceOrganizationKeyboard(String type, Integer page) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        List<OrganizationDto> organizationsByType = botAdapter.getOrganizationsByType(type);
+        List<OrganizationDto> organizationsByType = botAdapter.getAllOrganizationsByType(type);
         long countOrganizations = organizationsByType.stream()
                 .filter(o -> o.typeOrganization().equals(type))
                 .count();
@@ -98,7 +75,7 @@ public class MenuServiceImpl implements MenuService {
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
-    private InlineKeyboardMarkup descriptionOrganizationKeyboard() {
+    private InlineKeyboardMarkup getDescriptionOrganizationKeyboard() {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Назад")

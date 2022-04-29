@@ -9,6 +9,5 @@ import java.util.List;
 
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
     List<Organization> findAllByName(String name);
-    List<Organization> findAllByTypeOrganization(TypeOrganization type);
     Page<Organization> findAllByTypeOrganization(Pageable page, TypeOrganization typeOrganization);
 }

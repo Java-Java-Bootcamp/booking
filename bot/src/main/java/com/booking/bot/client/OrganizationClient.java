@@ -3,6 +3,8 @@ package com.booking.bot.client;
 import com.booking.bot.dto.OrganizationDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -10,28 +12,16 @@ import java.util.List;
 @FeignClient(url = "localhost:8080", name = "organization-client")
 public interface OrganizationClient {
 
-    @RequestMapping(value = "/organization", params = {"pageNo", "pageSize", "sortBy"}, method = RequestMethod.GET)
-    List<OrganizationDto> getSort(@RequestParam Integer pageNo,
-                                  @RequestParam Integer pageSize,
-                                  @RequestParam String sortBy);
-
-    @RequestMapping(value = "/organization", params = {"pageNo", "pageSize", "sortBy", "type"}, method = RequestMethod.GET)
-    <TypeOrganization> List<OrganizationDto> getSortByType(@RequestParam Integer pageNo,
-                                                           @RequestParam Integer pageSize,
-                                                           @RequestParam String sortBy,
-                                                           @RequestParam TypeOrganization type);
-
-    @RequestMapping(value = "/organization", params = {"name"}, method = RequestMethod.GET)
-    List<OrganizationDto> getAll(@RequestParam String name);
-
-    @RequestMapping(value = "/organization", params = {"id"}, method = RequestMethod.GET)
-    OrganizationDto getById(@RequestParam Long id);
-
-    @RequestMapping(value = "/organization", params = {"type"}, method = RequestMethod.GET)
-    <TypeOrganization> List<OrganizationDto> getByType(@RequestParam TypeOrganization type);
-
     @GetMapping("/organization")
-    List<OrganizationDto> getAllOrganization();
+    Page<OrganizationDto> getAllOrganizations(Pageable pageable);
+
+    @GetMapping("/organization/type/{type}")
+    <TypeOrganization>
+    Page<OrganizationDto> getAllOrganizationsByType(@PathVariable TypeOrganization type,
+                                        Pageable pageable);
+
+    @GetMapping("/organization/{id}")
+    OrganizationDto getById(@PathVariable Long id);
 
     @PostMapping("/organization")
     void addNewBooking(@RequestBody OrganizationDto organizationDto);
