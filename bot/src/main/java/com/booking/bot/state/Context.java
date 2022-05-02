@@ -2,16 +2,17 @@ package com.booking.bot.state;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class Context {
     private Integer messageId;
     private Long userId;
-    private Command command;
     private Stage stage;
-    public Context(Long userId,Integer messageId) {
+    private String callbackData;
+    public Context(Long userId) {
         this.userId = userId;
-        this.messageId = messageId;
     }
 }

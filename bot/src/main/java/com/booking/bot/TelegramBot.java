@@ -5,8 +5,8 @@ import com.booking.bot.state.Command;
 import com.booking.bot.state.Context;
 import com.booking.bot.state.Stage;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.base.Enums;
 import lombok.RequiredArgsConstructor;
-import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -15,8 +15,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.yaml.snakeyaml.util.EnumUtils;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -56,15 +58,20 @@ public class TelegramBot extends TelegramLongPollingBot {
                 handleCallback(update.getCallbackQuery());
             } catch (TelegramApiException e) {
                 e.printStackTrace();
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
-    private void handleCallback(CallbackQuery callbackQuery) throws TelegramApiException {
+    private void handleCallback(CallbackQuery callbackQuery) throws TelegramApiException, JsonProcessingException {
         if (!callbackQuery.getData().isEmpty()) {
+            if(Enums.getIfPresent(Stage.class, callbackQuery.getData()).isPresent()){
+                contextMap.get(callbackQuery.getMessage().getChatId()).setStage(Stage.valueOf(callbackQuery.getData()));
+            }
+            contextMap.get(callbackQuery.getMessage().getChatId()).setCallbackData(callbackQuery.getData());
             execute(
-                    chatService.commandSwitch(
-                            contextMap.get(callbackQuery.getMessage().getChatId()),
+                    chatService.editMessageText(contextMap.get(callbackQuery.getMessage().getChatId()),
                             callbackQuery.getMessage()
                     )
             );
@@ -75,6 +82,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
+        contextMap.putIfAbsent(message.getFrom().getId(), new Context(message.getFrom().getId()));
         if (message.isCommand()) {
             Optional<MessageEntity> commandEntity =
                     message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
@@ -82,12 +90,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String command =
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
                 if (command.equals(Command.START.getValue())) {
-                    //Создание контекста чата
-                    contextMap.putIfAbsent(message.getFrom().getId(), new Context(message.getFrom().getId(),
-                            execute(chatService.commandSwitch(command, message))
-                                    .getMessageId()));
-                    contextMap.get(message.getFrom().getId()).setCommand(Command.START);
                     contextMap.get(message.getFrom().getId()).setStage(Stage.MAIN);
+                    contextMap.get(message.getFrom().getId())
+                            .setMessageId(
+                                    execute(chatService.sendMessage(contextMap
+                                            .get(message.getFrom().getId()), message))
+                                            .getMessageId());
+                    System.out.println(contextMap.get(message.getFrom().getId()).toString());
                 }
             }
         }

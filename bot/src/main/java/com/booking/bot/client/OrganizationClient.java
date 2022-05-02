@@ -15,10 +15,11 @@ public interface OrganizationClient {
     @GetMapping("/organization")
     Page<OrganizationDto> getAllOrganizations(Pageable pageable);
 
-    @GetMapping("/organization/type/{type}")
-    <TypeOrganization>
-    Page<OrganizationDto> getAllOrganizationsByType(@PathVariable TypeOrganization type,
-                                        Pageable pageable);
+//    @GetMapping("/organization/type/{type}")
+//    Page<OrganizationDto> getAllOrganizationsByType(@PathVariable TypeOrganization type,
+//                                                    Pageable pageable);
+    @GetMapping("/organization/type")
+    List<String> getAllTypesOrganizations();
 
     @GetMapping("/organization/{id}")
     OrganizationDto getById(@PathVariable Long id);

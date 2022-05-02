@@ -10,7 +10,7 @@ import java.util.List;
 public interface OrganizationService {
     Page<OrganizationDto> getOrganizationsByType(Pageable pageable, TypeOrganization typeOrganization);
 
-    Page<OrganizationDto> getOrganizations(Pageable pageable);
+    Page<OrganizationDto> getAllOrganizations(Pageable pageable);
 
     List<OrganizationDto> findAllByName(String name);
 
@@ -19,4 +19,6 @@ public interface OrganizationService {
     OrganizationDto getById(Long id);
 
     void updateOrganization(OrganizationDto organizationDto);
+
+    List<TypeOrganization> getAllTypesOrganizations();
 }

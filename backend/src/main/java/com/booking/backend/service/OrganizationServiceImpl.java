@@ -1,6 +1,7 @@
 package com.booking.backend.service;
 
 import com.booking.backend.dto.OrganizationDto;
+import com.booking.backend.entity.Organization;
 import com.booking.backend.entity.TypeOrganization;
 import com.booking.backend.mapper.OrganizationMapper;
 import com.booking.backend.repository.OrganizationRepository;
@@ -20,7 +21,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationMapper organizationMapper;
 
     @Override
-    public Page<OrganizationDto> getOrganizations(Pageable pageable) {
+    public Page<OrganizationDto> getAllOrganizations(Pageable pageable) {
         return organizationRepository.findAll(pageable)
                 .map(organizationMapper::convertFromOrganizationToOrganizationDto);
     }
@@ -47,6 +48,15 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public void updateOrganization(OrganizationDto organizationDto) {
         organizationRepository.save(organizationMapper.convertFromOrganizationDtoToOrganization(organizationDto));
+    }
+
+    @Override
+    public List<TypeOrganization> getAllTypesOrganizations() {
+        return organizationRepository.findAll()
+                .stream()
+                .map(Organization::getTypeOrganization)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     @Override
