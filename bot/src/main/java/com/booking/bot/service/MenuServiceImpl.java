@@ -4,9 +4,8 @@ import com.booking.bot.adapter.BotAdapter;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.state.Context;
 import com.booking.bot.state.Stage;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -48,25 +47,20 @@ public class MenuServiceImpl implements MenuService {
     }
 
     public InlineKeyboardMarkup getChoiceOrganizationKeyboard(Context context) {
+        //TODO: сделать кнопки страниц
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         System.out.println(context.getCallbackData());
-        System.out.println(botAdapter.getAllOrganizations());
-//        List<OrganizationDto> organizationsByType = botAdapter.getAllOrganizationsByType(context.getCallbackData());
-//        System.out.println(organizationsByType.toString());
-//        long countOrganizations = organizationsByType.stream()
-//                .filter(o -> o.typeOrganization().equals(type))
-//                .count();
-//        List<InlineKeyboardButton> pagesButtonRow = new ArrayList<>();
-//        long pages = countOrganizations >= 10 && countOrganizations % 10 == 0 ? countOrganizations / 10 : countOrganizations / 10 + 1;
-//        for (int i = 1; i <= pages; i++) {
-//            pagesButtonRow.add(InlineKeyboardButton.builder().text(String.valueOf(i)).callbackData(String.valueOf(i)).build());
-//        }
-//        organizationsByType.forEach(organizationDto -> rowList.add(
-//                List.of(InlineKeyboardButton.builder()
-//                        .text(organizationDto.name())
-//                        .callbackData(organizationDto.id().toString())
-//                        .build())));
-//        rowList.add(pagesButtonRow);
+        Page<OrganizationDto> organizationsByTypePage = botAdapter.getAllOrganizationsByType(context.getCallbackData());
+        List<InlineKeyboardButton> pagesButtonRow = new ArrayList<>();
+        for (int i = 1; i <= organizationsByTypePage.getTotalPages(); i++) {
+            pagesButtonRow.add(InlineKeyboardButton.builder().text(String.valueOf(i)).callbackData(String.valueOf(i)).build());
+        }
+        organizationsByTypePage.getContent().forEach(organizationDto -> rowList.add(
+                List.of(InlineKeyboardButton.builder()
+                        .text(organizationDto.name())
+                        .callbackData(organizationDto.id().toString())
+                        .build())));
+        rowList.add(pagesButtonRow);
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Назад")
                 .callbackData("TYPE")

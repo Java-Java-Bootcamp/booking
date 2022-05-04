@@ -15,9 +15,9 @@ public interface OrganizationClient {
     @GetMapping("/organization")
     Page<OrganizationDto> getAllOrganizations(Pageable pageable);
 
-//    @GetMapping("/organization/type/{type}")
-//    Page<OrganizationDto> getAllOrganizationsByType(@PathVariable TypeOrganization type,
-//                                                    Pageable pageable);
+    @GetMapping("/organization/type/{type}?size=5")
+    Page<OrganizationDto> getAllOrganizationsByType(@PathVariable String type,
+                                                    Pageable pageable);
     @GetMapping("/organization/type")
     List<String> getAllTypesOrganizations();
 
