@@ -65,15 +65,14 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void handleCallback(CallbackQuery callbackQuery) throws TelegramApiException, JsonProcessingException {
+        Context context = contextMap.get(callbackQuery.getMessage().getChatId());
         if (!callbackQuery.getData().isEmpty()) {
-            if(Enums.getIfPresent(Stage.class, callbackQuery.getData()).isPresent()){
-                contextMap.get(callbackQuery.getMessage().getChatId()).setStage(Stage.valueOf(callbackQuery.getData()));
+            context.setCallbackData(callbackQuery.getData().split(":")[1]);
+            if(Enums.getIfPresent(Stage.class, callbackQuery.getData().split(":")[0]).isPresent()){
+                context.setStage(Stage.valueOf(callbackQuery.getData().split(":")[0]));
             }
-            contextMap.get(callbackQuery.getMessage().getChatId()).setCallbackData(callbackQuery.getData());
             execute(
-                    chatService.editMessageText(contextMap.get(callbackQuery.getMessage().getChatId()),
-                            callbackQuery.getMessage()
-                    )
+                    chatService.editMessageText(context, callbackQuery.getMessage())
             );
         } else {
             System.out.println("callbackQuery is empty");
@@ -83,6 +82,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
         contextMap.putIfAbsent(message.getFrom().getId(), new Context(message.getFrom().getId()));
+        Context context = contextMap.get(message.getFrom().getId());
         if (message.isCommand()) {
             Optional<MessageEntity> commandEntity =
                     message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
@@ -90,13 +90,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 String command =
                         message.getText().substring(commandEntity.get().getOffset(), commandEntity.get().getLength());
                 if (command.equals(Command.START.getValue())) {
-                    contextMap.get(message.getFrom().getId()).setStage(Stage.MAIN);
-                    contextMap.get(message.getFrom().getId())
-                            .setMessageId(
+                    context.setStage(Stage.MAIN);
+                    context.setMessageId(
                                     execute(chatService.sendMessage(contextMap
                                             .get(message.getFrom().getId()), message))
                                             .getMessageId());
-                    System.out.println(contextMap.get(message.getFrom().getId()).toString());
+                    System.out.println(context);
                 }
             }
         }

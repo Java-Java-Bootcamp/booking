@@ -24,7 +24,7 @@ public class MenuServiceImpl implements MenuService {
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(InlineKeyboardButton.builder()
                 .text("Поиск")
-                .callbackData("TYPE")
+                .callbackData("TYPE:null")
                 .build());
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow);
@@ -33,54 +33,57 @@ public class MenuServiceImpl implements MenuService {
     }
 
     public InlineKeyboardMarkup getOrganizationTypeKeyboard(Context context) {
+        context.setBeforeStage(Stage.TYPE);
         context.setStage(Stage.ORGANIZATIONS);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         botAdapter.getAllTypesOrganizations().forEach(typeOrganization -> rowList.add(List.of(InlineKeyboardButton.builder()
                 .text(typeOrganization)
-                .callbackData(typeOrganization)
+                .callbackData("ORGANIZATIONS:"+typeOrganization)
                 .build())));
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Главное меню")
-                .callbackData("MAIN")
+                .callbackData("MAIN:null")
                 .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
     public InlineKeyboardMarkup getChoiceOrganizationKeyboard(Context context) {
-        //TODO: сделать кнопки страниц
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        System.out.println(context.getCallbackData());
-        Page<OrganizationDto> organizationsByTypePage = botAdapter.getAllOrganizationsByType(context.getCallbackData());
+        Page<OrganizationDto> organizationsByTypePage = botAdapter.getAllOrganizationsByType(context.getType(),context.getPage());
         List<InlineKeyboardButton> pagesButtonRow = new ArrayList<>();
-        for (int i = 1; i <= organizationsByTypePage.getTotalPages(); i++) {
-            pagesButtonRow.add(InlineKeyboardButton.builder().text(String.valueOf(i)).callbackData(String.valueOf(i)).build());
+        for (int i = 0; i < organizationsByTypePage.getTotalPages() && organizationsByTypePage.getTotalPages() !=1; i++) {
+            pagesButtonRow.add(InlineKeyboardButton.builder()
+                    .text(String.valueOf(i+1))
+                    .callbackData("PAGE:"+i)
+                    .build());
         }
         organizationsByTypePage.getContent().forEach(organizationDto -> rowList.add(
                 List.of(InlineKeyboardButton.builder()
                         .text(organizationDto.name())
-                        .callbackData(organizationDto.id().toString())
+                        .callbackData("DESCRIPTION:"+organizationDto.id().toString())
                         .build())));
         rowList.add(pagesButtonRow);
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Назад")
-                .callbackData("TYPE")
+                .callbackData("TYPE:null")
                 .build()));
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Главное меню")
-                .callbackData("MENU")
+                .callbackData("MAIN:null")
                 .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
-    private InlineKeyboardMarkup getDescriptionOrganizationKeyboard() {
+    //TODO: Починить кнопку Назад
+    public InlineKeyboardMarkup getDescriptionOrganizationKeyboard(Context context) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Назад")
-                .callbackData("back from description")
+                .callbackData("ORGANIZATIONS:"+context.getType())
                 .build()));
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Главное меню")
-                .callbackData("/start")
+                .callbackData("MAIN:null")
                 .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }

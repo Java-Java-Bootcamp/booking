@@ -6,7 +6,6 @@ import com.booking.bot.dto.PersonDto;
 import com.booking.bot.state.Context;
 import com.booking.bot.state.Stage;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,7 +17,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 public class ChatServiceImpl implements ChatService {
     private final MenuService menuService;
     private final BotAdapter botAdapter;
-    public SendMessage sendMessage(Context context,Message message) throws JsonProcessingException {
+
+    public SendMessage sendMessage(Context context, Message message) throws JsonProcessingException {
         Long userId = message.getFrom().getId();
         String userName = message.getFrom().getUserName();
         if (context.getStage().equals(Stage.MAIN)) {
@@ -55,35 +55,33 @@ public class ChatServiceImpl implements ChatService {
                         .build();
             }
             case ORGANIZATIONS -> {
+                if (context.getBeforeStage() == Stage.TYPE) {
+                    context.setType(context.getCallbackData());
+                    context.setPage(0);
+                    context.setBeforeStage(Stage.ORGANIZATIONS);
+                } else {
+                    context.setPage(Integer.parseInt(context.getCallbackData()));
+                }
+                return EditMessageText.builder()
+                        .messageId(context.getMessageId())
+                        .text("Выбери организацию:")
+                        .chatId(message.getChatId().toString())
+                        .replyMarkup(menuService.getChoiceOrganizationKeyboard(context))
+                        .build();
+            }
+            case DESCRIPTION -> {
+                    OrganizationDto organization = botAdapter.getOrganizationById(context.getCallbackData());
                     return EditMessageText.builder()
                             .messageId(context.getMessageId())
-                            .text("Выбери организацию:")
+                            .text(organization.name() + ":" +
+                                    "\nРейтинг = " + organization.rating() +
+                                    "\nСредний чек = " + organization.averageCheck() +
+                                    "\nРасписание = " + organization.schedule())
                             .chatId(message.getChatId().toString())
-                            .replyMarkup(menuService.getChoiceOrganizationKeyboard(context))
+                            .replyMarkup(menuService.getDescriptionOrganizationKeyboard(context))
                             .build();
             }
             default -> {
-//                if ("choice of organizations".equals(chatState.get(userId))) {
-//                    return EditMessageText.builder()
-//                            .messageId(lastMessageId)
-//                            .text("Выбери организацию:")
-//                            .chatId(message.getChatId().toString())
-//                            .replyMarkup(menuService.getKeyboard(chatState, message, command))
-//                            .build();
-//                }
-//                if ("description of the organization".equals(chatState.get(userId))) {
-//                    OrganizationDto organization = botAdapter.getOrganizationById(command);
-//                    chatData.put(userId, organization.typeOrganization());
-//                    return EditMessageText.builder()
-//                            .messageId(lastMessageId)
-//                            .text(organization.name() + ":" +
-//                                    "\nРейтинг = " + organization.rating() +
-//                                    "\nСредний чек = " + organization.averageCheck() +
-//                                    "\nРасписание = " + organization.schedule())
-//                            .chatId(message.getChatId().toString())
-//                            .replyMarkup(menuService.getKeyboard(chatState, message, command))
-//                            .build();
-//                }
                 return null;
             }
         }

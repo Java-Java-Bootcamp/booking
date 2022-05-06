@@ -8,4 +8,5 @@ public interface MenuService {
     InlineKeyboardMarkup getMainKeyboard(Context context) throws JsonProcessingException;
     InlineKeyboardMarkup getOrganizationTypeKeyboard(Context context);
     InlineKeyboardMarkup getChoiceOrganizationKeyboard(Context context);
+    InlineKeyboardMarkup getDescriptionOrganizationKeyboard(Context context);
 }
