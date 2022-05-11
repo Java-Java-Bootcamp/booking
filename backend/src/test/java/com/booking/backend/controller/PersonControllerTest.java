@@ -1,6 +1,5 @@
 package com.booking.backend.controller;
 
-import com.booking.backend.entity.Organization;
 import com.booking.backend.entity.Person;
 import com.booking.backend.repository.PersonRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -11,9 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

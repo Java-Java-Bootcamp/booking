@@ -1,17 +1,17 @@
 package com.booking.backend.controller;
 
+import com.booking.backend.dto.PersonDto;
 import com.booking.backend.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import com.booking.backend.dto.PersonDto;
 
 @RequiredArgsConstructor
 @RestController
 public class PersonController {
     private final PersonService personService;
 
-    @GetMapping("/person/id={id}")
-    public PersonDto getPersonById(@PathVariable Long id) {
+    @GetMapping("/person/{id}")
+    public PersonDto getById(@PathVariable Long id) {
         return personService.getPersonById(id);
     }
 

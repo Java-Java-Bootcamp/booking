@@ -3,7 +3,6 @@ package com.booking.backend.service;
 import com.booking.backend.dto.ReservationDto;
 import com.booking.backend.mapper.ReservationMapper;
 import com.booking.backend.repository.ReservationRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

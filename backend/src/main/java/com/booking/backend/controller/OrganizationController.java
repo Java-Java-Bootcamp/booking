@@ -2,8 +2,11 @@ package com.booking.backend.controller;
 
 
 import com.booking.backend.dto.OrganizationDto;
+import com.booking.backend.entity.TypeOrganization;
 import com.booking.backend.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,26 +17,29 @@ public class OrganizationController {
 
     private final OrganizationService organizationService;
 
-    @GetMapping("/organization/pageNo={pageNo},pageSize={pageSize},sortBy={sortBy}")
-    public List<OrganizationDto> getAll(@PathVariable Integer pageNo,
-                                        @PathVariable Integer pageSize,
-                                        @PathVariable String sortBy) {
-        return organizationService.getSortedOrganization(pageNo, pageSize, sortBy);
+    @GetMapping("/organization")
+    Page<OrganizationDto> getAllOrganizations(Pageable pageable) {
+        return organizationService.getAllOrganizations(pageable);
     }
 
-    @GetMapping("/organization/name={name}")
-    public List<OrganizationDto> getAll(@PathVariable String name) {
-        return organizationService.findAllByName(name);
+    @GetMapping("/organization/type/{type}")
+    Page<OrganizationDto> getAllOrganizationsByType(@PathVariable TypeOrganization type,
+                                                    Pageable pageable) {
+        return organizationService.getOrganizationsByType(pageable, type);
     }
 
-    @GetMapping("/organization/id={id}")
+    @GetMapping("/organization/type")
+    List<TypeOrganization> getAllTypesOrganizations() {
+        return organizationService.getAllTypesOrganizations();
+    }
+
+    @GetMapping("/organization/{id}")
     public OrganizationDto getById(@PathVariable Long id) {
         return organizationService.getById(id);
     }
 
-    @GetMapping("/organization")
-    public List<OrganizationDto> getAllOrganization() {
-        return organizationService.getAll();
+    @PostMapping("/organization")
+    public void addNewBooking(@RequestBody OrganizationDto organizationDto) {
+        organizationService.updateOrganization(organizationDto);
     }
-
 }

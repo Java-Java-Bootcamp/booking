@@ -5,4 +5,5 @@ public record OrganizationDto(Long id,
                               String schedule,
                               Double averageCheck,
                               Double rating,
-                              String typeOrganization) {}
+                              String typeOrganization) {
+}

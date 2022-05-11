@@ -1,12 +1,16 @@
 package com.booking.backend.service;
 
 import com.booking.backend.dto.OrganizationDto;
+import com.booking.backend.entity.TypeOrganization;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface OrganizationService {
+    Page<OrganizationDto> getOrganizationsByType(Pageable pageable, TypeOrganization typeOrganization);
 
-    List<OrganizationDto> getSortedOrganization(Integer pageNo, Integer pageSize, String sortBy);
+    Page<OrganizationDto> getAllOrganizations(Pageable pageable);
 
     List<OrganizationDto> findAllByName(String name);
 
@@ -15,4 +19,6 @@ public interface OrganizationService {
     OrganizationDto getById(Long id);
 
     void updateOrganization(OrganizationDto organizationDto);
+
+    List<TypeOrganization> getAllTypesOrganizations();
 }

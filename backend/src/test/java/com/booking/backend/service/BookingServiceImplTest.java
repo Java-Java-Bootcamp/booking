@@ -2,20 +2,14 @@ package com.booking.backend.service;
 
 import com.booking.backend.dto.BookingDto;
 import com.booking.backend.dto.PersonDto;
-import com.booking.backend.entity.Booking;
 import com.booking.backend.mapper.BookingMapper;
 import com.booking.backend.repository.BookingRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

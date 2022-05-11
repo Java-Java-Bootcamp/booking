@@ -1,10 +1,15 @@
 package com.booking.bot.service;
 
-import org.telegram.telegrambots.meta.api.objects.Message;
+import com.booking.bot.state.Context;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
-import java.util.Map;
-
 public interface MenuService {
-    InlineKeyboardMarkup getKeyboard(Map<Long,String> chatState, Message message, String command);
+    InlineKeyboardMarkup getMainKeyboard(Context context) throws JsonProcessingException;
+
+    InlineKeyboardMarkup getOrganizationTypeKeyboard(Context context);
+
+    InlineKeyboardMarkup getChoiceOrganizationKeyboard(Context context);
+
+    InlineKeyboardMarkup getDescriptionOrganizationKeyboard(Context context);
 }

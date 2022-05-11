@@ -9,7 +9,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 class OrganizationRepositoryTest {
@@ -26,13 +27,13 @@ class OrganizationRepositoryTest {
 
     @Test
     void getAllByNameNotFound() {
-        List<Organization> list = organizationRepository.getAllByName("Not existed");
+        List<Organization> list = organizationRepository.findAllByName("Not existed");
         assertTrue(list.isEmpty());
     }
 
     @Test
     void getAllByNameFound() {
-        List<Organization> list = organizationRepository.getAllByName("Org");
+        List<Organization> list = organizationRepository.findAllByName("Org");
         assertEquals(2, list.size());
     }
 }
