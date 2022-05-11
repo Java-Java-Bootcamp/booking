@@ -6,7 +6,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 
 public interface MenuService {
     InlineKeyboardMarkup getMainKeyboard(Context context) throws JsonProcessingException;
+
     InlineKeyboardMarkup getOrganizationTypeKeyboard(Context context);
+
     InlineKeyboardMarkup getChoiceOrganizationKeyboard(Context context);
+
     InlineKeyboardMarkup getDescriptionOrganizationKeyboard(Context context);
 }

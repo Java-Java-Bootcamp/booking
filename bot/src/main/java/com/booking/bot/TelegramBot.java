@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.util.Map;
 import java.util.Optional;
@@ -68,7 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         Context context = contextMap.get(callbackQuery.getMessage().getChatId());
         if (!callbackQuery.getData().isEmpty()) {
             context.setCallbackData(callbackQuery.getData().split(":")[1]);
-            if(Enums.getIfPresent(Stage.class, callbackQuery.getData().split(":")[0]).isPresent()){
+            if (Enums.getIfPresent(Stage.class, callbackQuery.getData().split(":")[0]).isPresent()) {
                 context.setStage(Stage.valueOf(callbackQuery.getData().split(":")[0]));
             }
             execute(
@@ -92,9 +91,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 if (command.equals(Command.START.getValue())) {
                     context.setStage(Stage.MAIN);
                     context.setMessageId(
-                                    execute(chatService.sendMessage(contextMap
-                                            .get(message.getFrom().getId()), message))
-                                            .getMessageId());
+                            execute(chatService.sendMessage(contextMap
+                                    .get(message.getFrom().getId()), message))
+                                    .getMessageId());
                     System.out.println(context);
                 }
             }

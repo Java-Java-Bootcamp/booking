@@ -18,6 +18,7 @@ public class PersonMapperImpl implements PersonMapper {
     public PersonDto convertFromPersonToPersonDtoInController(Optional<Person> person) {
         return person.map(value -> new PersonDto(value.getId(), value.getName())).orElse(null);
     }
+
     @Override
     public PersonDto convertFromPersonToPersonDto(Person person) {
         return new PersonDto(person.getId(), person.getName());

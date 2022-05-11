@@ -5,6 +5,7 @@ import com.booking.backend.entity.SomeObject;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
 @Getter
 @RequiredArgsConstructor
 @Component

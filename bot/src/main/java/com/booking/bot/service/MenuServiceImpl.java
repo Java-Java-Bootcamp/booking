@@ -3,7 +3,6 @@ package com.booking.bot.service;
 import com.booking.bot.adapter.BotAdapter;
 import com.booking.bot.dto.OrganizationDto;
 import com.booking.bot.state.Context;
-import com.booking.bot.state.Stage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -33,12 +32,10 @@ public class MenuServiceImpl implements MenuService {
     }
 
     public InlineKeyboardMarkup getOrganizationTypeKeyboard(Context context) {
-        context.setBeforeStage(Stage.TYPE);
-        context.setStage(Stage.ORGANIZATIONS);
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         botAdapter.getAllTypesOrganizations().forEach(typeOrganization -> rowList.add(List.of(InlineKeyboardButton.builder()
                 .text(typeOrganization)
-                .callbackData("ORGANIZATIONS:"+typeOrganization)
+                .callbackData("ORGANIZATIONS:" + typeOrganization)
                 .build())));
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Главное меню")
@@ -49,18 +46,18 @@ public class MenuServiceImpl implements MenuService {
 
     public InlineKeyboardMarkup getChoiceOrganizationKeyboard(Context context) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        Page<OrganizationDto> organizationsByTypePage = botAdapter.getAllOrganizationsByType(context.getType(),context.getPage());
+        Page<OrganizationDto> organizationsByTypePage = botAdapter.getAllOrganizationsByType(context.getType(), context.getPage());
         List<InlineKeyboardButton> pagesButtonRow = new ArrayList<>();
-        for (int i = 0; i < organizationsByTypePage.getTotalPages() && organizationsByTypePage.getTotalPages() !=1; i++) {
+        for (int i = 0; i < organizationsByTypePage.getTotalPages() && organizationsByTypePage.getTotalPages() != 1; i++) {
             pagesButtonRow.add(InlineKeyboardButton.builder()
-                    .text(String.valueOf(i+1))
-                    .callbackData("PAGE:"+i)
+                    .text(String.valueOf(i + 1))
+                    .callbackData("PAGE:" + i)
                     .build());
         }
         organizationsByTypePage.getContent().forEach(organizationDto -> rowList.add(
                 List.of(InlineKeyboardButton.builder()
                         .text(organizationDto.name())
-                        .callbackData("DESCRIPTION:"+organizationDto.id().toString())
+                        .callbackData("DESCRIPTION:" + organizationDto.id().toString())
                         .build())));
         rowList.add(pagesButtonRow);
         rowList.add(List.of(InlineKeyboardButton.builder()
@@ -74,12 +71,11 @@ public class MenuServiceImpl implements MenuService {
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
-    //TODO: Починить кнопку Назад
     public InlineKeyboardMarkup getDescriptionOrganizationKeyboard(Context context) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Назад")
-                .callbackData("ORGANIZATIONS:"+context.getType())
+                .callbackData("ORGANIZATIONS:" + context.getType())
                 .build()));
         rowList.add(List.of(InlineKeyboardButton.builder()
                 .text("<< Главное меню")

@@ -1,9 +1,9 @@
 package com.booking.backend.controller;
 
+import com.booking.backend.dto.PersonDto;
 import com.booking.backend.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import com.booking.backend.dto.PersonDto;
 
 @RequiredArgsConstructor
 @RestController

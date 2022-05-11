@@ -4,5 +4,6 @@ public enum Stage {
     MAIN,
     TYPE,
     ORGANIZATIONS,
+    PAGE,
     DESCRIPTION
 }

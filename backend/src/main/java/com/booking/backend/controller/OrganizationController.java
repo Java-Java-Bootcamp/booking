@@ -24,9 +24,10 @@ public class OrganizationController {
 
     @GetMapping("/organization/type/{type}")
     Page<OrganizationDto> getAllOrganizationsByType(@PathVariable TypeOrganization type,
-                                        Pageable pageable) {
+                                                    Pageable pageable) {
         return organizationService.getOrganizationsByType(pageable, type);
     }
+
     @GetMapping("/organization/type")
     List<TypeOrganization> getAllTypesOrganizations() {
         return organizationService.getAllTypesOrganizations();
