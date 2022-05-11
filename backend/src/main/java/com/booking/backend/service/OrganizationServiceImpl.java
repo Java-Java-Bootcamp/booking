@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationRepository organizationRepository;
@@ -23,31 +23,31 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public Page<OrganizationDto> getAllOrganizations(Pageable pageable) {
         return organizationRepository.findAll(pageable)
-                .map(organizationMapper::convertFromOrganizationToOrganizationDto);
+                .map(organizationMapper::convert);
     }
 
     public Page<OrganizationDto> getOrganizationsByType(Pageable pageable, TypeOrganization type) {
         return organizationRepository.findAllByTypeOrganization(pageable, type)
-                .map(organizationMapper::convertFromOrganizationToOrganizationDto);
+                .map(organizationMapper::convert);
     }
 
     @Override
     public List<OrganizationDto> findAllByName(String name) {
         return organizationRepository.findAllByName(name).stream()
-                .map(organizationMapper::convertFromOrganizationToOrganizationDto)
-                .collect(Collectors.toList());
+                .map(organizationMapper::convert)
+                .toList();
     }
 
     @Override
     public List<OrganizationDto> getAll() {
         return organizationRepository.findAll().stream()
-                .map(organizationMapper::convertFromOrganizationToOrganizationDto)
-                .collect(Collectors.toList());
+                .map(organizationMapper::convert)
+                .toList();
     }
 
     @Override
     public void updateOrganization(OrganizationDto organizationDto) {
-        organizationRepository.save(organizationMapper.convertFromOrganizationDtoToOrganization(organizationDto));
+        organizationRepository.save(organizationMapper.convert(organizationDto));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public OrganizationDto getById(Long id) {
-        return organizationMapper.convertFromOrganizationToOrganizationDto(organizationRepository.getById(id));
+        return organizationMapper.convert(organizationRepository.getById(id));
     }
 }
 

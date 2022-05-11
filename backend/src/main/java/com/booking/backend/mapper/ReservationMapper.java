@@ -2,10 +2,12 @@ package com.booking.backend.mapper;
 
 import com.booking.backend.dto.ReservationDto;
 import com.booking.backend.entity.Reservation;
+import org.mapstruct.Mapper;
 
+@Mapper(componentModel = "spring")
 public interface ReservationMapper {
 
-    Reservation convertFromReservationDtoToReservation(ReservationDto reservationDto);
+    Reservation convert (ReservationDto reservationDto);
 
-    ReservationDto convertFromReservationToReservationDto(Reservation reservation);
+    ReservationDto convert (Reservation reservation);
 }

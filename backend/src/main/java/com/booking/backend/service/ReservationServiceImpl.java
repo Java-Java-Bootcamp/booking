@@ -20,6 +20,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public void updateWithNewBooking(ReservationDto reservationDto) {
         bookingService.addNewBooking(reservationDto.bookingDto());
-        reservationRepository.save(reservationMapper.convertFromReservationDtoToReservation(reservationDto));
+        reservationRepository.save(reservationMapper.convert(reservationDto));
     }
 }

@@ -26,6 +26,7 @@ public class Organization {
     private Double averageCheck;
 
     private Double rating;
+
     @Enumerated(EnumType.STRING)
     private TypeOrganization typeOrganization;
 }

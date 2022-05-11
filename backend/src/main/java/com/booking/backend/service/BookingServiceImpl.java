@@ -15,6 +15,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public void addNewBooking(BookingDto bookingDto) {
-        bookingRepository.save(bookingMapper.convertFromBookingDtoToBooking(bookingDto));
+        bookingRepository.save(bookingMapper.convert(bookingDto));
     }
 }
