@@ -20,8 +20,8 @@ public interface OrganizationClient {
 
     @GetMapping("/organization/type/{type}?size=10&page={page}")
     Page<OrganizationDto> findAllByType(@PathVariable String type,
-                                                    @PathVariable Integer page,
-                                                    Pageable pageable);
+                                        @PathVariable Integer page,
+                                        Pageable pageable);
 
     @GetMapping("/organization/type")
     List<String> findAllTypes();
