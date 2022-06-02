@@ -18,18 +18,18 @@ public class OrganizationController {
     private final OrganizationService organizationService;
 
     @GetMapping("/organization")
-    Page<OrganizationDto> getAllOrganizations(Pageable pageable) {
+    Page<OrganizationDto> findAll(Pageable pageable) {
         return organizationService.getAllOrganizations(pageable);
     }
 
     @GetMapping("/organization/type/{type}")
-    Page<OrganizationDto> getAllOrganizationsByType(@PathVariable TypeOrganization type,
+    Page<OrganizationDto> findAllByType(@PathVariable TypeOrganization type,
                                                     Pageable pageable) {
         return organizationService.getOrganizationsByType(pageable, type);
     }
 
     @GetMapping("/organization/type")
-    List<TypeOrganization> getAllTypesOrganizations() {
+    List<TypeOrganization> findAllTypes() {
         return organizationService.getAllTypesOrganizations();
     }
 

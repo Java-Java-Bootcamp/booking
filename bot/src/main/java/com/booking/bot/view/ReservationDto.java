@@ -1,4 +1,4 @@
-package com.booking.bot.dto;
+package com.booking.bot.view;
 
 public record ReservationDto(Long id,
                              Integer beginning,

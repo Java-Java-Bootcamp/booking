@@ -1,4 +1,4 @@
-package com.booking.bot.dto;
+package com.booking.bot.view;
 
 public record OrganizationDto(Long id,
                               String name,

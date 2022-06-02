@@ -1,7 +1,6 @@
 package com.booking.bot.service;
 
-import com.booking.bot.adapter.BotAdapter;
-import com.booking.bot.dto.OrganizationDto;
+import com.booking.bot.view.OrganizationDto;
 import com.booking.bot.state.Context;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,11 +13,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MenuServiceImpl implements MenuService {
-    private final BotAdapter botAdapter;
+public class MenuKeyboardFactory {
+    private final OrganizationService organizationService;
 
-    @Override
-    public InlineKeyboardMarkup getMainKeyboard(Context context) {
+    private final String MAIN_MENU_TEXT_BUTTON = "<< Главное меню";
+    private final String BACK_TEXT_BUTTON = "<< Назад";
+    public InlineKeyboardMarkup createMainKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(InlineKeyboardButton.builder()
@@ -31,22 +31,22 @@ public class MenuServiceImpl implements MenuService {
         return inlineKeyboardMarkup;
     }
 
-    public InlineKeyboardMarkup getOrganizationTypeKeyboard(Context context) {
+    public InlineKeyboardMarkup createOrganizationTypeKeyboard() {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        botAdapter.getAllTypesOrganizations().forEach(typeOrganization -> rowList.add(List.of(InlineKeyboardButton.builder()
+        organizationService.findAllTypes().forEach(typeOrganization -> rowList.add(List.of(InlineKeyboardButton.builder()
                 .text(typeOrganization)
                 .callbackData("ORGANIZATIONS:" + typeOrganization)
                 .build())));
         rowList.add(List.of(InlineKeyboardButton.builder()
-                .text("<< Главное меню")
+                .text(MAIN_MENU_TEXT_BUTTON)
                 .callbackData("MAIN:null")
                 .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
-    public InlineKeyboardMarkup getChoiceOrganizationKeyboard(Context context) {
+    public InlineKeyboardMarkup createChoiceOrganizationKeyboard(Context context) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        Page<OrganizationDto> organizationsByTypePage = botAdapter.getAllOrganizationsByType(context.getType(), context.getPage());
+        Page<OrganizationDto> organizationsByTypePage = organizationService.findAllByType(context.getType(), context.getPage());
         List<InlineKeyboardButton> pagesButtonRow = new ArrayList<>();
         for (int i = 0; i < organizationsByTypePage.getTotalPages() && organizationsByTypePage.getTotalPages() != 1; i++) {
             pagesButtonRow.add(InlineKeyboardButton.builder()
@@ -61,24 +61,24 @@ public class MenuServiceImpl implements MenuService {
                         .build())));
         rowList.add(pagesButtonRow);
         rowList.add(List.of(InlineKeyboardButton.builder()
-                .text("<< Назад")
+                .text(BACK_TEXT_BUTTON)
                 .callbackData("TYPE:null")
                 .build()));
         rowList.add(List.of(InlineKeyboardButton.builder()
-                .text("<< Главное меню")
+                .text(MAIN_MENU_TEXT_BUTTON)
                 .callbackData("MAIN:null")
                 .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();
     }
 
-    public InlineKeyboardMarkup getDescriptionOrganizationKeyboard(Context context) {
+    public InlineKeyboardMarkup createDescriptionOrganizationKeyboard(Context context) {
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(List.of(InlineKeyboardButton.builder()
-                .text("<< Назад")
+                .text(BACK_TEXT_BUTTON)
                 .callbackData("ORGANIZATIONS:" + context.getType())
                 .build()));
         rowList.add(List.of(InlineKeyboardButton.builder()
-                .text("<< Главное меню")
+                .text(MAIN_MENU_TEXT_BUTTON)
                 .callbackData("MAIN:null")
                 .build()));
         return InlineKeyboardMarkup.builder().keyboard(rowList).build();

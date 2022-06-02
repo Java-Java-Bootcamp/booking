@@ -1,6 +1,7 @@
 package com.booking.bot;
 
-import com.booking.bot.service.ChatService;
+import com.booking.bot.service.ChatEditMessageTextFactory;
+import com.booking.bot.service.ChatSendMessageFactory;
 import com.booking.bot.state.Command;
 import com.booking.bot.state.Context;
 import com.booking.bot.state.Stage;
@@ -24,7 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private final ChatService chatService;
+    private final ChatEditMessageTextFactory chatEditMessageTextFactory;
+    private final ChatSendMessageFactory chatSendMessageFactory;
     private final Map<Long, Context> contextMap = new ConcurrentHashMap<>();
 
     @Value("${bot.username}")
@@ -63,25 +65,31 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    private Context getContext(Message message) {
+        return contextMap.get(message.getChatId());
+    }
+
     private void handleCallback(CallbackQuery callbackQuery) throws TelegramApiException, JsonProcessingException {
-        Context context = contextMap.get(callbackQuery.getMessage().getChatId());
+
+        Context context = getContext(callbackQuery.getMessage());
         if (!callbackQuery.getData().isEmpty()) {
             context.setCallbackData(callbackQuery.getData().split(":")[1]);
             if (Enums.getIfPresent(Stage.class, callbackQuery.getData().split(":")[0]).isPresent()) {
                 context.setStage(Stage.valueOf(callbackQuery.getData().split(":")[0]));
             }
             execute(
-                    chatService.editMessageText(context, callbackQuery.getMessage())
+                    chatEditMessageTextFactory.createEditMessageText(context, callbackQuery.getMessage())
             );
         } else {
             System.out.println("callbackQuery is empty");
         }
-        System.out.println(callbackQuery.getData());
     }
 
     private void handleMessage(Message message) throws TelegramApiException, JsonProcessingException {
         contextMap.putIfAbsent(message.getFrom().getId(), new Context(message.getFrom().getId()));
-        Context context = contextMap.get(message.getFrom().getId());
+
+        Context context = getContext(message);
+
         if (message.isCommand()) {
             Optional<MessageEntity> commandEntity =
                     message.getEntities().stream().filter(e -> "bot_command".equals(e.getType())).findFirst();
@@ -91,10 +99,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 if (command.equals(Command.START.getValue())) {
                     context.setStage(Stage.MAIN);
                     context.setMessageId(
-                            execute(chatService.sendMessage(contextMap
+                            execute(chatSendMessageFactory.createSendMessage(contextMap
                                     .get(message.getFrom().getId()), message))
                                     .getMessageId());
-                    System.out.println(context);
                 }
             }
         }
